@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit
+# 提交前自动运行文档规范检查
+# 启用方式（每人克隆后执行一次）：
+#   git config core.hooksPath .githooks
+
+echo "🔍 运行文档规范检查..."
+
+# 检查 Python 是否可用
+if ! command -v python3 &>/dev/null && ! command -v python &>/dev/null; then
+    echo "⚠️  未找到 Python，跳过文档规范检查"
+    exit 0
+fi
+
+PYTHON=$(command -v python3 || command -v python)
+SCRIPT="scripts/normalize_docs.py"
+
+# 仅在有 docs/ 变更时运行检查
+CHANGED_DOCS=$(git diff --cached --name-only | grep -E "^docs/")
+
+if [ -z "$CHANGED_DOCS" ]; then
+    echo "ℹ️  无 docs/ 文件变更，跳过检查"
+    exit 0
+fi
+
+"$PYTHON" "$SCRIPT"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ 提交已阻止：请修复文档规范问题后重新提交"
+    echo "   手动运行检查：python scripts/normalize_docs.py"
+    exit 1
+fi
+
+exit 0

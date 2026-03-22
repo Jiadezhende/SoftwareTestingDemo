@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# .githooks/pre-push
+# push 前自动运行 mvn test，失败则阻止推送
+
+echo "🧪 运行单元测试（mvn test）..."
+
+# 检查 mvn 是否可用
+if ! command -v mvn &>/dev/null; then
+    echo "⚠️  未找到 mvn，跳过测试"
+    exit 0
+fi
+
+mvn test --no-transfer-progress -q
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ 推送已阻止：测试未通过，请修复后重新 push"
+    echo "   手动运行：mvn test"
+    exit 1
+fi
+
+echo "✅ 所有测试通过"
+exit 0
