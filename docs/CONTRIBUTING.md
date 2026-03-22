@@ -140,7 +140,35 @@ python scripts/normalize_docs.py
 
 ---
 
-## 7. 测试设计方法说明
+## 7. 用例填写样例
+
+### 单元测试
+
+**测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:checkLogin(String userID, String password)`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCheckLogin()`
+
+| 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
+|---------|---------|---------|---------|------|
+| UT-US-001 | 用户名与密码均正确 | 返回对应 User 对象 | 返回 User 对象 | 正确 |
+| UT-US-002 | 用户名正确，密码错误 | 返回 null | 返回 null | 正确 |
+| UT-US-003 | userID 为 null | 返回 null（不抛异常） | 抛出 NullPointerException | 错误 |
+
+---
+
+### 集成测试
+
+**测试对象**：`src.main.java.com.demo.controller.user.UserController.java:login(String userID, String password, HttpServletRequest)`
+**测试脚本**：`src.test.java.com.demo.integration.LoginFlowTest`
+
+| 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
+|-----------|---------|---------|---------|---------|------|
+| 普通用户登录 | IT-LG-001 | 合法用户提交正确用户名与密码 | 响应体为 `/index`，Session 写入 `user` | 响应体为 `/index` | 正确 |
+| 密码错误 | IT-LG-002 | 用户名存在但密码错误 | 响应体为 `false` | 响应体为 `false` | 正确 |
+| 未登录访问 | IT-LG-003 | 未登录直接访问 `/order_manage` | 抛出 LoginException | 抛出 LoginException | 正确 |
+
+---
+
+## 8. 测试设计方法说明
 
 | 方法       | 适用场景                      |
 |-----------|------------------------------|
