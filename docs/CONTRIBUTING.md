@@ -124,7 +124,8 @@ python scripts/normalize_docs.py
 | 钩子         | 触发时机     | 做什么                                    |
 |-------------|------------|-------------------------------------------|
 | `pre-commit` | `git commit` | 检查 docs/ 文档规范（编号格式、必填字段、结论合法性、缺陷关联等） |
-| `pre-push`   | `git push`   | 运行 `mvn test`，测试不通过则阻止推送      |
+
+> 单元测试由 GitHub Actions 在每次 push 后自动运行，结果见仓库 Actions 标签页。
 
 ### pre-commit 检查项明细
 
