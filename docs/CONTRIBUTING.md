@@ -8,12 +8,11 @@
 
 | 成员         | 负责测试模块        | 用例编号段             | 负责文档章节                           |
 |--------------|--------------------|-----------------------|---------------------------------------|
-| 成员A（组长） | UserServiceImpl    | `UT-US-001~099`       | 测试总结报告 第1章 + 第4章 + 汇总       |
-| 成员B        | OrderServiceImpl   | `UT-OR-001~099`       | 测试总结报告 第2章（单元测试-Order）     |
-| 成员C        | VenueServiceImpl   | `UT-VN-001~099`       | 测试总结报告 第2章（单元测试-Venue）     |
-| 成员D        | NewsServiceImpl    | `UT-NW-001~099`       | 测试总结报告 第2章（单元测试-News）      |
-| 成员D        | MessageServiceImpl | `UT-MG-001~099`       | 测试总结报告 第2章（单元测试-Message）   |
-| 成员E        | 集成测试            | `IT-LG/OR/VN/MG-001~099` | 测试总结报告 第3章 + IEEE829计划        |
+| 成员A（组长） | UserServiceImpl                       | `UT-US-001~099`          | IEEE829计划 + 测试总结报告 第1章 + 第4章 + 汇总 |
+| 成员B        | OrderServiceImpl                      | `UT-OR-001~099`          | 测试总结报告 第2章（单元测试-Order）            |
+| 成员C        | VenueServiceImpl + NewsServiceImpl    | `UT-VN/NW-001~099`       | 测试总结报告 第2章（单元测试-Venue + News）     |
+| 成员D        | MessageServiceImpl                    | `UT-MG-001~099`          | 测试总结报告 第2章（单元测试-Message）          |
+| 成员E        | 集成测试                               | `IT-LG/OR/VN/MG-001~099` | 测试总结报告 第3章                            |
 
 > 示例：张三负责 UserServiceImpl，在 `TC_UT_US.md` 中填写编号 `UT-US-001` 起的用例，并撰写测试总结报告第1章。
 
@@ -25,7 +24,7 @@
 docs/
 ├── CONTRIBUTING.md              # 本文件，协作规范
 ├── test-plan/
-│   └── IEEE829_TestPlan.md      # 成员E负责
+│   └── IEEE829_TestPlan.md      # 成员A（组长）负责
 ├── test-cases/
 │   ├── _TEMPLATE.md             # 用例表格模板（不要修改）
 │   ├── UT-UserService/
@@ -35,7 +34,7 @@ docs/
 │   ├── UT-VenueService/
 │   │   └── TC_UT_VN.md          # 成员C负责
 │   ├── UT-NewsService/
-│   │   └── TC_UT_NW.md          # 成员D负责
+│   │   └── TC_UT_NW.md          # 成员C负责
 │   ├── UT-MessageService/
 │   │   └── TC_UT_MG.md          # 成员D负责
 │   └── IT-Integration/

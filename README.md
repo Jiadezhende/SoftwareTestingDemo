@@ -65,11 +65,11 @@ python scripts/normalize_docs.py
 
 | 成员 | 负责模块 | 用例编号段 |
 |------|---------|-----------|
-| 成员A（组长） | UserServiceImpl | `UT-US-001~099` |
-| 成员B | OrderServiceImpl | `UT-OR-001~099` |
-| 成员C | VenueServiceImpl | `UT-VN-001~099` |
-| 成员D | NewsServiceImpl + MessageServiceImpl | `UT-NW/MG-001~099` |
-| 成员E | 集成测试 + IEEE829计划 | `IT-LG/OR/VN/MG-001~099` |
+| 成员A（组长） | UserServiceImpl                    | `UT-US-001~099`          |
+| 成员B        | OrderServiceImpl                   | `UT-OR-001~099`          |
+| 成员C        | VenueServiceImpl + NewsServiceImpl | `UT-VN/NW-001~099`       |
+| 成员D        | MessageServiceImpl                 | `UT-MG-001~099`          |
+| 成员E        | 集成测试                            | `IT-LG/OR/VN/MG-001~099` |
 
 ## 文档规范
 
