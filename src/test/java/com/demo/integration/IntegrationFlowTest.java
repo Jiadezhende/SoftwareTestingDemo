@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.web.util.NestedServletException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -96,14 +98,11 @@ class IntegrationFlowTest {
 
     @Test
     void testOrderManageWithoutLoginShouldThrowLoginException() throws Exception {
-        mockMvc.perform(get("/order_manage"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(result -> {
-                    Exception ex = result.getResolvedException();
-                    if (!(ex instanceof LoginException)) {
-                        throw new AssertionError("Expected LoginException");
-                    }
-                });
+        NestedServletException ex = assertThrows(NestedServletException.class,
+                () -> mockMvc.perform(get("/order_manage")));
+        if (!(ex.getCause() instanceof LoginException)) {
+            throw new AssertionError("Expected LoginException");
+        }
     }
 
     @Test
@@ -117,12 +116,22 @@ class IntegrationFlowTest {
                         .session(session)
                         .param("venueName", "羽毛球馆A")
                         .param("date", "2026-04-08")
-                        .param("startTime", "2026-04-08 10:00:00")
+                .param("startTime", "2026-04-08 10:00")
                         .param("hours", "2"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("order_manage"));
 
         verify(orderService, times(1)).submit(anyString(), any(LocalDateTime.class), anyInt(), anyString());
+    }
+
+    @Test
+    void testDeleteOrderWithoutLoginShouldStillInvokeDelete_Vulnerability() throws Exception {
+        mockMvc.perform(post("/delOrder.do")
+                        .param("orderID", "1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(orderService, times(1)).delOrder(1);
     }
 
     @Test
@@ -167,14 +176,59 @@ class IntegrationFlowTest {
     }
 
     @Test
+    void testSendMessageWithoutLoginShouldStillPersist_Vulnerability() throws Exception {
+        mockMvc.perform(post("/sendMessage")
+                        .param("userID", "u9999")
+                        .param("content", "匿名越权留言"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/message_list"));
+
+        ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
+        verify(messageService, times(1)).create(captor.capture());
+        Message saved = captor.getValue();
+        if (!"u9999".equals(saved.getUserID())) {
+            throw new AssertionError("Expected forged userID to be persisted");
+        }
+    }
+
+    @Test
+    void testSendMessageWithForgedUserIdShouldPersistForgedIdentity_Vulnerability() throws Exception {
+        User loginUser = new User();
+        loginUser.setUserID("u1001");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("user", loginUser);
+
+        mockMvc.perform(post("/sendMessage")
+                        .session(session)
+                        .param("userID", "u2002")
+                        .param("content", "伪造身份留言"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/message_list"));
+
+        ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
+        verify(messageService, times(1)).create(captor.capture());
+        Message saved = captor.getValue();
+        if (!"u2002".equals(saved.getUserID())) {
+            throw new AssertionError("Expected request userID to be trusted by current implementation");
+        }
+    }
+
+    @Test
+    void testDeleteMessageWithoutLoginShouldStillInvokeDelete_Vulnerability() throws Exception {
+        mockMvc.perform(post("/delMessage.do")
+                        .param("messageID", "11"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        verify(messageService, times(1)).delById(11);
+    }
+
+    @Test
     void testFindUserMessageWithoutLoginShouldThrowLoginException() throws Exception {
-        mockMvc.perform(get("/message/findUserList").param("page", "1"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(result -> {
-                    Exception ex = result.getResolvedException();
-                    if (!(ex instanceof LoginException)) {
-                        throw new AssertionError("Expected LoginException");
-                    }
-                });
+        NestedServletException ex = assertThrows(NestedServletException.class,
+                () -> mockMvc.perform(get("/message/findUserList").param("page", "1")));
+        if (!(ex.getCause() instanceof LoginException)) {
+            throw new AssertionError("Expected LoginException");
+        }
     }
 }
