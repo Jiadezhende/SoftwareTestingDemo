@@ -54,8 +54,9 @@ class NewsServiceImplTest {
 
     @Test
     void testCreate() {
-        News news = buildNews(3, "新增公告");
-        when(newsDao.save(news)).thenReturn(news);
+        News news = buildNews(0, "新增公告");
+        News savedNews = buildNews(3, "新增公告");
+        when(newsDao.save(news)).thenReturn(savedNews);
 
         int result = newsService.create(news);
 
