@@ -81,8 +81,9 @@ class VenueServiceImplTest {
 
     @Test
     void testCreate() {
-        Venue venue = buildVenue(6, "体操馆", 200);
-        when(venueDao.save(venue)).thenReturn(venue);
+        Venue venue = buildVenue(0, "体操馆", 200);
+        Venue savedVenue = buildVenue(6, "体操馆", 200);
+        when(venueDao.save(venue)).thenReturn(savedVenue);
 
         int result = venueService.create(venue);
 
