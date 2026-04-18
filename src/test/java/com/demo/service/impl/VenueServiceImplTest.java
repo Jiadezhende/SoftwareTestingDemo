@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -114,7 +113,7 @@ class VenueServiceImplTest {
         int result = venueService.countVenueName("综合馆");
 
         assertEquals(2, result);
-        verify(venueDao, times(1)).countByVenueName("综合馆");
+        verify(venueDao).countByVenueName("综合馆");
     }
 
     private Venue buildVenue(int venueId, String venueName, int price) {
