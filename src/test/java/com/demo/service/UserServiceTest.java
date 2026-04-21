@@ -218,26 +218,22 @@ class UserServiceTest {
         assertNull(result);
     }
 
-    // EC15: userID = null → 返回 null
+    // EC15: userID = null → 服务层应拒绝，不应透传给 DAO（待实现）
     @Test
-    @DisplayName("EC15 - checkLogin: userID 为 null 时返回 null")
+    @Disabled("未实现：checkLogin 应在 userID 为 null 时直接拒绝，不应调用 DAO")
+    @DisplayName("EC15 - checkLogin: userID 为 null 时服务层应抛出异常")
     void testCheckLogin_EC15_nullUserID() {
-        when(userDao.findByUserIDAndPassword(null, "123456")).thenReturn(null);
-
-        User result = userService.checkLogin(null, "123456");
-
-        assertNull(result);
+        assertThrows(Exception.class, () -> userService.checkLogin(null, "123456"));
+        verify(userDao, never()).findByUserIDAndPassword(any(), any());
     }
 
-    // EC16: password = null → 返回 null
+    // EC16: password = null → 服务层应拒绝，不应透传给 DAO（待实现）
     @Test
-    @DisplayName("EC16 - checkLogin: password 为 null 时返回 null")
+    @Disabled("未实现：checkLogin 应在 password 为 null 时直接拒绝，不应调用 DAO")
+    @DisplayName("EC16 - checkLogin: password 为 null 时服务层应抛出异常")
     void testCheckLogin_EC16_nullPassword() {
-        when(userDao.findByUserIDAndPassword("user001", null)).thenReturn(null);
-
-        User result = userService.checkLogin("user001", null);
-
-        assertNull(result);
+        assertThrows(Exception.class, () -> userService.checkLogin("user001", null));
+        verify(userDao, never()).findByUserIDAndPassword(any(), any());
     }
 
     // ==================== create ====================
@@ -366,5 +362,46 @@ class UserServiceTest {
         int result = userService.countUserID(null);
 
         assertEquals(0, result);
+    }
+
+    // ==================== create（黑盒补充：输入校验缺陷）====================
+
+    // EC28: User.password = ""（空密码）→ 服务层应拒绝（待实现）
+    @Test
+    @Disabled("未实现：create 应拒绝 password 为空的 User")
+    @DisplayName("EC28 - create: password 为空时应抛出异常")
+    void testCreate_EC28_emptyPassword() {
+        User user = new User();
+        user.setUserID("u002");
+        user.setUserName("李四");
+        user.setPassword("");
+
+        assertThrows(Exception.class, () -> userService.create(user));
+        verify(userDao, never()).save(any());
+    }
+
+    // EC29: User.userID = null → 服务层应拒绝（待实现）
+    @Test
+    @Disabled("未实现：create 应拒绝 userID 为 null 的 User")
+    @DisplayName("EC29 - create: userID 字段为 null 时应抛出异常")
+    void testCreate_EC29_nullUserID() {
+        User user = new User();
+        user.setUserID(null);
+        user.setUserName("李四");
+        user.setPassword("pass123");
+
+        assertThrows(Exception.class, () -> userService.create(user));
+        verify(userDao, never()).save(any());
+    }
+
+    // EC30: userID 已存在 → create 应在服务层校验唯一性并拒绝（待实现）
+    @Test
+    @Disabled("未实现：create 应调用 countUserID 检查唯一性，而非依赖数据库约束兜底")
+    @DisplayName("EC30 - create: userID 重复时服务层应拒绝并不调用 save")
+    void testCreate_EC30_duplicateUserID() {
+        when(userDao.countByUserID("user001")).thenReturn(1);
+
+        assertThrows(Exception.class, () -> userService.create(mockUser));
+        verify(userDao, never()).save(any());
     }
 }
