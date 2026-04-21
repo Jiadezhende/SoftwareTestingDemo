@@ -15,6 +15,9 @@
 | BUG-002 | 成员B | 2026-04-02 | 单元测试 | UT-OR-005 | submit 接收 `hours=0` 时仍保存订单，未拦截无效预约时长 | 中 | 新建 | 边界值缺陷 |
 | BUG-003 | 成员B | 2026-04-02 | 单元测试 | UT-OR-006 | submit 接收不存在的 `venueName` 时直接抛出 `NullPointerException` | 高 | 新建 | 缺少空值防护 |
 | BUG-004 | 成员B | 2026-04-02 | 单元测试 | UT-OR-008 | updateOrder 接收不存在的 `orderID` 时直接抛出 `NullPointerException` | 高 | 新建 | 与 confirm/finish/reject 的异常处理不一致 |
+| BUG-005 | 成员B | 2026-04-21 | 单元测试 | UT-OR-018 | confirmOrder 未校验前置状态，`STATE_WAIT / STATE_FINISH / STATE_REJECT` 仍可重复确认 | 高 | 新建 | 状态机缺陷 |
+| BUG-006 | 成员B | 2026-04-21 | 单元测试 | UT-OR-019 | finishOrder 未校验前置状态，`STATE_NO_AUDIT / STATE_REJECT` 仍可直接完成 | 高 | 新建 | 状态机缺陷 |
+| BUG-007 | 成员B | 2026-04-21 | 单元测试 | UT-OR-020 | rejectOrder 未校验前置状态，`STATE_WAIT / STATE_FINISH` 仍可被拒绝 | 高 | 新建 | 状态机缺陷 |
 
 ---
 

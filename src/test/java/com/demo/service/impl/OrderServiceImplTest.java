@@ -5,6 +5,7 @@ import com.demo.dao.VenueDao;
 import com.demo.entity.Order;
 import com.demo.entity.Venue;
 import com.demo.service.OrderService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -103,26 +104,22 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testSubmitWithZeroHoursStillSavesOrder() {
+    void testSubmitWithZeroHoursShouldBeRejected() {
         Venue venue = buildVenue(8, "Badminton Hall", 120);
         LocalDateTime startTime = LocalDateTime.of(2026, 4, 3, 9, 0);
         when(venueDao.findByVenueName("Badminton Hall")).thenReturn(venue);
 
-        orderService.submit("Badminton Hall", startTime, 0, "userA");
-
-        ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
-        verify(orderDao).save(orderCaptor.capture());
-        Order savedOrder = orderCaptor.getValue();
-        assertEquals(0, savedOrder.getHours());
-        assertEquals(0, savedOrder.getTotal());
+        assertThrows(IllegalArgumentException.class,
+                () -> orderService.submit("Badminton Hall", startTime, 0, "userA"));
+        verify(orderDao, never()).save(any(Order.class));
     }
 
     @Test
-    void testSubmitWithUnknownVenueThrowsNullPointerException() {
+    void testSubmitWithUnknownVenueShouldBeRejected() {
         LocalDateTime startTime = LocalDateTime.of(2026, 4, 3, 9, 0);
         when(venueDao.findByVenueName("Unknown Venue")).thenReturn(null);
 
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> orderService.submit("Unknown Venue", startTime, 2, "userA"));
         verify(orderDao, never()).save(any(Order.class));
     }
@@ -148,13 +145,13 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void testUpdateOrderWithMissingOrderThrowsNullPointerException() {
+    void testUpdateOrderWithMissingOrderShouldBeRejected() {
         Venue venue = buildVenue(9, "Tennis Court", 150);
         LocalDateTime startTime = LocalDateTime.of(2026, 4, 4, 14, 0);
         when(venueDao.findByVenueName("Tennis Court")).thenReturn(venue);
         when(orderDao.findByOrderID(404)).thenReturn(null);
 
-        assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> orderService.updateOrder(404, "Tennis Court", startTime, 3, "userB"));
         verify(orderDao, never()).save(any(Order.class));
     }
@@ -217,6 +214,36 @@ class OrderServiceImplTest {
         when(orderDao.findByOrderID(16)).thenReturn(null);
 
         assertThrows(RuntimeException.class, () -> orderService.rejectOrder(16));
+        verify(orderDao, never()).updateState(anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("BB-SC-06 - confirmOrder: STATE_WAIT/STATE_FINISH/STATE_REJECT 时应抛出异常")
+    void testConfirmOrderInvalidPreStateShouldBeRejected() {
+        Order order = buildOrder(20, 2, OrderService.STATE_WAIT, "userA");
+        when(orderDao.findByOrderID(20)).thenReturn(order);
+
+        assertThrows(IllegalArgumentException.class, () -> orderService.confirmOrder(20));
+        verify(orderDao, never()).updateState(anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("BB-SC-07 - finishOrder: STATE_NO_AUDIT/STATE_REJECT 时应抛出异常")
+    void testFinishOrderInvalidPreStateShouldBeRejected() {
+        Order order = buildOrder(21, 2, OrderService.STATE_NO_AUDIT, "userA");
+        when(orderDao.findByOrderID(21)).thenReturn(order);
+
+        assertThrows(IllegalArgumentException.class, () -> orderService.finishOrder(21));
+        verify(orderDao, never()).updateState(anyInt(), anyInt());
+    }
+
+    @Test
+    @DisplayName("BB-SC-08 - rejectOrder: STATE_WAIT/STATE_FINISH 时应抛出异常")
+    void testRejectOrderInvalidPreStateShouldBeRejected() {
+        Order order = buildOrder(22, 2, OrderService.STATE_WAIT, "userA");
+        when(orderDao.findByOrderID(22)).thenReturn(order);
+
+        assertThrows(IllegalArgumentException.class, () -> orderService.rejectOrder(22));
         verify(orderDao, never()).updateState(anyInt(), anyInt());
     }
 
