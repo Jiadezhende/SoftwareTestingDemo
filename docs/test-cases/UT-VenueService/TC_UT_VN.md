@@ -93,7 +93,7 @@
 ## create
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:create(Venue venue)`
-**测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`
+**测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`、`testCreate_NegativePrice_ShouldBeRejected()`、`testCreate_EmptyVenueName_ShouldBeRejected()`、`testCreate_DuplicateVenueName_ShouldBeRejected()`
 
 ### 用例设计（等价类/边界值/决策表）
 
@@ -101,8 +101,11 @@
 
 | 等价类 | 输入特征 | 预期行为 |
 |-------|----------|----------|
-| EC1 | `venue != null` | 调用 `venueDao.save(venue)` 并返回 `save` 结果的 `venueID` |
-| EC2 | `venue == null` | 异常向上透传（由 DAO 或下层抛出） |
+| EC1 | `venue != null` 且 `price >= 0` 且 `venueName` 非空且未重复 | 调用 `venueDao.save(venue)` 并返回 `save` 结果的 `venueID` |
+| EC2 | `venue.price < 0` | 抛出业务异常，且不调用 `venueDao.save(venue)` |
+| EC3 | `venue.venueName == ""` | 抛出业务异常，且不调用 `venueDao.save(venue)` |
+| EC4 | `venueName` 已存在（需先查询数量） | 抛出业务异常，且不调用 `venueDao.save(venue)` |
+| EC5 | `venue == null` | 异常向上透传（由 DAO 或下层抛出） |
 
 **边界值分析（返回值来源）**
 
@@ -110,15 +113,21 @@
 |--------|------------|----------|
 | `save(venue)` 返回对象 | `null` | `UT-VN-026` |
 | 返回 `venueID` | `0` | `UT-VN-017` |
+| `price` | `-1` | `UT-VN-029` |
+| `venueName` | `""` | `UT-VN-030` |
+| `countVenueName(venueName)` | `1`（已存在） | `UT-VN-031` |
 
 **决策表（核心规则）**
 
-| 条件/规则 | R1 | R2 | R3 | R4 |
-|---|---|---|---|---|
-| `venue == null` | 否 | 否 | 否 | 是 |
-| DAO 返回 `savedVenue == null` | 否 | 是 | 否 | — |
-| DAO 抛异常 | 否 | 否 | 是 | 是 |
-| 期望 | 返回 `savedVenue.venueID` | 抛出 `NullPointerException` | 异常透传 | 异常透传 |
+| 条件/规则 | R1 | R2 | R3 | R4 | R5 | R6 | R7 |
+|---|---|---|---|---|---|---|---|
+| `price < 0` | 否 | 否 | 否 | 否 | 是 | 否 | 否 |
+| `venueName == ""` | 否 | 否 | 否 | 否 | 否 | 是 | 否 |
+| `countVenueName(venueName) > 0` | 否 | 否 | 否 | 否 | 否 | 否 | 是 |
+| `venue == null` | 否 | 否 | 否 | 是 | — | — | — |
+| DAO 返回 `savedVenue == null` | 否 | 是 | 否 | — | — | — | — |
+| DAO 抛异常 | 否 | 否 | 是 | 是 | — | — | — |
+| 期望 | 返回 `savedVenue.venueID` | 抛出 `NullPointerException` | 异常透传 | 异常透传 | 抛出业务异常且不保存 | 抛出业务异常且不保存 | 抛出业务异常且不保存 |
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -126,6 +135,9 @@
 | UT-VN-017 | 边界值：新增场馆后持久化对象 `venueID=0` | 调用 `venueDao.save(venue)`，返回持久化后对象的 `venueID=0` | 方法最终返回 `0`，证明 service 未额外加工返回值 | 正确 |
 | UT-VN-018 | 异常路径：DAO 保存场馆抛出异常 | 异常向上透传，不返回默认值 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-VN-026 | 边界值：DAO `save` 返回 `null` | 调用 `venueDao.save(venue)` 后获取 `venueID` 触发空指针异常 | 捕获到 `NullPointerException` | 正确 |
+| UT-VN-029 | 缺陷占位：`price < 0` 的场馆不应被创建 | 应抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_NegativePrice_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
+| UT-VN-030 | 缺陷占位：`venueName` 为空的场馆不应被创建 | 应抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_EmptyVenueName_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
+| UT-VN-031 | 缺陷占位：重复 `venueName` 的场馆不应被创建 | 应先校验 `countVenueName(venueName)`，若已存在则抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_DuplicateVenueName_ShouldBeRejected()`，当前实现未调用重名校验 | 待测 |
 
 ## update
 

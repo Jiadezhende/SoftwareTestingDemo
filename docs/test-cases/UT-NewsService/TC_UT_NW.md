@@ -71,7 +71,7 @@
 ## create
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:create(News news)`
-**测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`
+**测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`、`testCreate_EmptyTitle_ShouldBeRejected()`、`testCreate_EmptyContent_ShouldBeRejected()`
 
 ### 用例设计（等价类/边界值/决策表）
 
@@ -79,8 +79,10 @@
 
 | 等价类 | 输入特征 | 预期行为 |
 |-------|----------|----------|
-| EC1 | `news != null` | 调用 `newsDao.save(news)` 并返回 `save` 结果的 `newsID` |
-| EC2 | `news == null` | 异常向上透传（由 DAO 或下层抛出） |
+| EC1 | `news != null` 且 `title`、`content` 均为非空字符串 | 调用 `newsDao.save(news)` 并返回 `save` 结果的 `newsID` |
+| EC2 | `news.title == ""` | 抛出业务异常，且不调用 `newsDao.save(news)` |
+| EC3 | `news.content == ""` | 抛出业务异常，且不调用 `newsDao.save(news)` |
+| EC4 | `news == null` | 异常向上透传（由 DAO 或下层抛出） |
 
 **边界值分析（返回值来源）**
 
@@ -88,15 +90,19 @@
 |--------|------------|----------|
 | `save(news)` 返回对象 | `null` | `UT-NW-017` |
 | 返回 `newsID` | `0` | `UT-NW-010` |
+| `title` | `""` | `UT-NW-019` |
+| `content` | `""` | `UT-NW-020` |
 
 **决策表（核心规则）**
 
-| 条件/规则 | R1 | R2 | R3 | R4 |
-|---|---|---|---|---|
-| `news == null` | 否 | 否 | 否 | 是 |
-| DAO 返回 `savedNews == null` | 否 | 是 | 否 | — |
-| DAO 抛异常 | 否 | 否 | 是 | 是 |
-| 期望 | 返回 `savedNews.newsID` | 抛出 `NullPointerException` | 异常透传 | 异常透传 |
+| 条件/规则 | R1 | R2 | R3 | R4 | R5 | R6 |
+|---|---|---|---|---|---|---|
+| `title == ""` | 否 | 否 | 否 | 否 | 是 | 否 |
+| `content == ""` | 否 | 否 | 否 | 否 | 否 | 是 |
+| `news == null` | 否 | 否 | 否 | 是 | — | — |
+| DAO 返回 `savedNews == null` | 否 | 是 | 否 | — | — | — |
+| DAO 抛异常 | 否 | 否 | 是 | 是 | — | — |
+| 期望 | 返回 `savedNews.newsID` | 抛出 `NullPointerException` | 异常透传 | 异常透传 | 抛出业务异常且不保存 | 抛出业务异常且不保存 |
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -104,6 +110,8 @@
 | UT-NW-010 | 边界值：新增新闻后持久化对象 `newsID=0` | 调用 `newsDao.save(news)`，返回持久化后对象的 `newsID=0` | 方法最终返回 `0`，证明 service 未额外加工返回值 | 正确 |
 | UT-NW-011 | 异常路径：DAO 保存新闻抛出异常 | 异常向上透传，不返回默认值 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-NW-017 | 边界值：DAO `save` 返回 `null` | 调用 `newsDao.save(news)` 后获取 `newsID` 触发空指针异常 | 捕获到 `NullPointerException` | 正确 |
+| UT-NW-019 | 缺陷占位：`title` 为空的新闻不应被创建 | 应抛出业务异常，且不调用 `newsDao.save(news)` | 已补充 `@Disabled` 占位测试 `testCreate_EmptyTitle_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
+| UT-NW-020 | 缺陷占位：`content` 为空的新闻不应被创建 | 应抛出业务异常，且不调用 `newsDao.save(news)` | 已补充 `@Disabled` 占位测试 `testCreate_EmptyContent_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
 
 ## delById
 

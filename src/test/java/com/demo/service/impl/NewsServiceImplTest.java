@@ -2,6 +2,8 @@ package com.demo.service.impl;
 
 import com.demo.dao.NewsDao;
 import com.demo.entity.News;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +20,9 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -156,6 +160,27 @@ class NewsServiceImplTest {
         assertThrows(NullPointerException.class, () -> newsService.create(news));
 
         verify(newsDao).save(news);
+    }
+
+    @Test
+    @Disabled("未实现：title 为空的新闻应被拒绝")
+    @DisplayName("17 - create: title 为空时应抛出异常")
+    void testCreate_EmptyTitle_ShouldBeRejected() {
+        News news = buildNews(0, "");
+
+        assertThrows(Exception.class, () -> newsService.create(news));
+        verify(newsDao, never()).save(any(News.class));
+    }
+
+    @Test
+    @Disabled("未实现：content 为空的新闻应被拒绝")
+    @DisplayName("18 - create: content 为空时应抛出异常")
+    void testCreate_EmptyContent_ShouldBeRejected() {
+        News news = buildNews(0, "内容为空公告");
+        news.setContent("");
+
+        assertThrows(Exception.class, () -> newsService.create(news));
+        verify(newsDao, never()).save(any(News.class));
     }
 
     @Test

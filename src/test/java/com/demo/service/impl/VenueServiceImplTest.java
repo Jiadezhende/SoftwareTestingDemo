@@ -2,6 +2,8 @@ package com.demo.service.impl;
 
 import com.demo.dao.VenueDao;
 import com.demo.entity.Venue;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +21,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -227,6 +231,38 @@ class VenueServiceImplTest {
         assertThrows(NullPointerException.class, () -> venueService.create(venue));
 
         verify(venueDao).save(venue);
+    }
+
+    @Test
+    @Disabled("未实现：price < 0 的场馆应被拒绝")
+    @DisplayName("11 - create: price < 0 时应抛出异常")
+    void testCreate_NegativePrice_ShouldBeRejected() {
+        Venue venue = buildVenue(0, "异常价格场馆", -1);
+
+        assertThrows(Exception.class, () -> venueService.create(venue));
+        verify(venueDao, never()).save(any(Venue.class));
+    }
+
+    @Test
+    @Disabled("未实现：venueName 为空的场馆应被拒绝")
+    @DisplayName("12 - create: venueName 为空时应抛出异常")
+    void testCreate_EmptyVenueName_ShouldBeRejected() {
+        Venue venue = buildVenue(0, "", 80);
+
+        assertThrows(Exception.class, () -> venueService.create(venue));
+        verify(venueDao, never()).save(any(Venue.class));
+    }
+
+    @Test
+    @Disabled("未实现：重复 venueName 应被拒绝")
+    @DisplayName("13 - create: venueName 重复时应抛出异常")
+    void testCreate_DuplicateVenueName_ShouldBeRejected() {
+        Venue venue = buildVenue(0, "羽毛球馆", 80);
+        when(venueDao.countByVenueName("羽毛球馆")).thenReturn(1);
+
+        assertThrows(Exception.class, () -> venueService.create(venue));
+        verify(venueDao).countByVenueName("羽毛球馆");
+        verify(venueDao, never()).save(any(Venue.class));
     }
 
     @Test
