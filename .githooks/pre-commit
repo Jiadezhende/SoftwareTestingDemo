@@ -6,25 +6,13 @@
 
 echo "🔍 运行文档规范检查..."
 
-# 检查 Python 是否可用（Windows Git Bash 下 python3 可能指向不可执行代理）
-if ! command -v python &>/dev/null && ! command -v python3 &>/dev/null; then
+# 检查 Python 是否可用
+if ! command -v python3 &>/dev/null && ! command -v python &>/dev/null; then
     echo "⚠️  未找到 Python，跳过文档规范检查"
     exit 0
 fi
 
-PYTHON=""
-for CANDIDATE in python python3; do
-    if command -v "$CANDIDATE" &>/dev/null && "$CANDIDATE" -V &>/dev/null; then
-        PYTHON="$CANDIDATE"
-        break
-    fi
-done
-
-if [ -z "$PYTHON" ]; then
-    echo "⚠️  未找到可执行的 Python，跳过文档规范检查"
-    exit 0
-fi
-
+PYTHON=$(command -v python3 || command -v python)
 SCRIPT="scripts/normalize_docs.py"
 
 # 仅在有 docs/ 变更时运行检查
