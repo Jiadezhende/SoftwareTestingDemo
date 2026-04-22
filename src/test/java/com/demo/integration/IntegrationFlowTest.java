@@ -38,8 +38,8 @@ import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -115,7 +115,7 @@ class IntegrationFlowTest {
     void testOrderManageWithoutLoginShouldThrowLoginException() throws Exception {
         NestedServletException ex = assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/order_manage")));
-        assertInstanceOf(LoginException.class, ex.getCause());
+                assertTrue(ex.getCause() instanceof LoginException);
     }
 
     @Test
@@ -234,7 +234,7 @@ class IntegrationFlowTest {
     void testFindUserMessageWithoutLoginShouldThrowLoginException() throws Exception {
         NestedServletException ex = assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/message/findUserList").param("page", "1")));
-        assertInstanceOf(LoginException.class, ex.getCause());
+                assertTrue(ex.getCause() instanceof LoginException);
     }
 
     @Test
