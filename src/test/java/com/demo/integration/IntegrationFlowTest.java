@@ -37,6 +37,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -57,11 +59,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         UserController.class,
         OrderController.class,
         VenueController.class,
-    MessageController.class,
-    NewsController.class,
-    AdminOrderController.class,
-    AdminMessageController.class,
-    AdminNewsController.class
+        MessageController.class,
+        NewsController.class,
+        AdminOrderController.class,
+        AdminMessageController.class,
+        AdminNewsController.class
 })
 class IntegrationFlowTest {
 
@@ -113,9 +115,7 @@ class IntegrationFlowTest {
     void testOrderManageWithoutLoginShouldThrowLoginException() throws Exception {
         NestedServletException ex = assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/order_manage")));
-        if (!(ex.getCause() instanceof LoginException)) {
-            throw new AssertionError("Expected LoginException");
-        }
+        assertInstanceOf(LoginException.class, ex.getCause());
     }
 
     @Test
@@ -183,9 +183,7 @@ class IntegrationFlowTest {
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(messageService, times(1)).create(captor.capture());
         Message saved = captor.getValue();
-        if (saved.getState() != 1) {
-            throw new AssertionError("Expected default state 1");
-        }
+        assertEquals(1, saved.getState(), "Expected default state 1");
     }
 
     @Test
@@ -199,9 +197,7 @@ class IntegrationFlowTest {
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(messageService, times(1)).create(captor.capture());
         Message saved = captor.getValue();
-        if (!"u9999".equals(saved.getUserID())) {
-            throw new AssertionError("Expected forged userID to be persisted");
-        }
+        assertEquals("u9999", saved.getUserID(), "Expected forged userID to be persisted");
     }
 
     @Test
@@ -221,9 +217,7 @@ class IntegrationFlowTest {
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(messageService, times(1)).create(captor.capture());
         Message saved = captor.getValue();
-        if (!"u2002".equals(saved.getUserID())) {
-            throw new AssertionError("Expected request userID to be trusted by current implementation");
-        }
+        assertEquals("u2002", saved.getUserID(), "Expected request userID to be trusted by current implementation");
     }
 
     @Test
@@ -240,9 +234,7 @@ class IntegrationFlowTest {
     void testFindUserMessageWithoutLoginShouldThrowLoginException() throws Exception {
         NestedServletException ex = assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/message/findUserList").param("page", "1")));
-        if (!(ex.getCause() instanceof LoginException)) {
-            throw new AssertionError("Expected LoginException");
-        }
+        assertInstanceOf(LoginException.class, ex.getCause());
     }
 
     @Test

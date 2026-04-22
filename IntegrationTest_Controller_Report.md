@@ -167,7 +167,7 @@ Set-Location 'd:\desktop\testpj\SoftwareTestingDemo'
 mvn -Dtest=IntegrationFlowTest test
 ```
 
-本轮执行结果：13 项测试通过（含漏洞探测型测试），关键漏洞均可稳定复现。
+本轮执行结果：12 项测试方法执行通过（含漏洞探测型测试）；其中 4 项为漏洞复现用例，按“安全期望应拒绝”口径计为失败，关键漏洞均可稳定复现。
 
 ## 8. 结论
 
