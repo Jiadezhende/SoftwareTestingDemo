@@ -8,7 +8,7 @@
 | 负责成员  | 成员E |
 | 用例编号段 | `IT-LG/OR/VN/MG-001 ~ 099` |
 | 创建日期  | 2026-04-08 |
-| 最后更新  | 2026-04-13 |
+| 最后更新  | 2026-04-21 |
 
 ### 变更记录
 
@@ -17,6 +17,7 @@
 | v1.0 | 2026-04-08 | 成员E | 初稿创建并完成首轮执行 |
 | v1.1 | 2026-04-13 | 成员E | 补充漏洞探测型集成测试用例（待执行） |
 | v1.2 | 2026-04-13 | 成员E | 执行漏洞探测型集成测试并记录缺陷 |
+| v1.3 | 2026-04-21 | 成员E | 基于黑盒自查手册补充 @Disabled 占位用例（需求缺口追踪） |
 
 ---
 
@@ -69,3 +70,20 @@
 | 未登录提交留言 | IT-MG-003 | 未登录直接调用 `/sendMessage` 提交留言 | 请求应被拒绝（登录校验失败） | 响应重定向 `/message_list`，留言成功入库（`userID=u9999`） | 错误 |
 | 伪造用户提交留言 | IT-MG-004 | 登录用户A在请求参数中提交用户B的 `userID` | 应使用会话用户身份，禁止伪造他人身份提交 | 留言按请求参数保存为 `userID=u2002`，未使用会话用户 | 错误 |
 | 未登录删除留言 | IT-MG-005 | 未登录直接调用 `/delMessage.do` 删除留言 | 请求应被拒绝（登录校验或权限校验失败） | 返回 `true`，`messageService.delById(11)` 被调用 | 错误 |
+
+---
+
+## 黑盒自查占位（@Disabled）
+
+> 说明：以下用例为“需求缺口占位”，已写入 `IntegrationFlowTest` 并使用 `@Disabled` 标记。当前 CI 语义为“跳过=已知缺口待实现”，不污染红绿信号。
+
+**测试脚本**：`src.test.java.com.demo.integration.IntegrationFlowTest:testAddOrder_NonPositiveHours_ShouldBeRejected(), testPassOrder_IllegalState_ShouldBeRejected(), testRejectOrder_IllegalState_ShouldBeRejected(), testPassOrRejectMessage_IllegalState_ShouldBeRejected(), testSendMessage_EmptyContent_ShouldBeRejected(), testAddNews_EmptyTitleOrContent_ShouldBeRejected()`
+
+| 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 当前状态 | 结论 |
+|-----------|---------|---------|---------|---------|------|
+| 订单提交参数校验 | IT-BB-01 | `/addOrder.do` 传入 `hours=0` | 抛出业务异常，且不应调用 `orderService.submit` | 跳过（@Disabled） | 待测 |
+| 订单状态机非法流转 | IT-BB-02 | `/passOrder.do` 对非法前置状态订单执行通过 | 抛出业务异常，且不应调用 `orderService.confirmOrder` | 跳过（@Disabled） | 待测 |
+| 订单状态机非法流转 | IT-BB-03 | `/rejectOrder.do` 对非法前置状态订单执行驳回 | 抛出业务异常，且不应调用 `orderService.rejectOrder` | 跳过（@Disabled） | 待测 |
+| 留言状态机非法流转 | IT-BB-04 | `/passMessage.do` / `/rejectMessage.do` 对已处理留言再次流转 | 抛出业务异常，且不应调用对应 service 方法 | 跳过（@Disabled） | 待测 |
+| 留言输入校验 | IT-BB-05 | `/sendMessage` 传入空 `content` | 抛出业务异常，且不应调用 `messageService.create` | 跳过（@Disabled） | 待测 |
+| 新闻输入校验 | IT-BB-06 | `/addNews.do` 传入空 `title` 或空 `content` | 抛出业务异常，且不应调用 `newsService.create` | 跳过（@Disabled） | 待测 |

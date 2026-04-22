@@ -1,19 +1,26 @@
 package com.demo.integration;
 
 import com.demo.controller.user.MessageController;
+import com.demo.controller.user.NewsController;
 import com.demo.controller.user.OrderController;
 import com.demo.controller.user.UserController;
 import com.demo.controller.user.VenueController;
+import com.demo.controller.admin.AdminMessageController;
+import com.demo.controller.admin.AdminNewsController;
+import com.demo.controller.admin.AdminOrderController;
 import com.demo.entity.Message;
 import com.demo.entity.User;
 import com.demo.entity.Venue;
 import com.demo.exception.LoginException;
 import com.demo.service.MessageService;
 import com.demo.service.MessageVoService;
+import com.demo.service.NewsService;
 import com.demo.service.OrderService;
 import com.demo.service.OrderVoService;
 import com.demo.service.UserService;
 import com.demo.service.VenueService;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -50,7 +57,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         UserController.class,
         OrderController.class,
         VenueController.class,
-        MessageController.class
+    MessageController.class,
+    NewsController.class,
+    AdminOrderController.class,
+    AdminMessageController.class,
+    AdminNewsController.class
 })
 class IntegrationFlowTest {
 
@@ -69,6 +80,8 @@ class IntegrationFlowTest {
     private MessageService messageService;
     @MockBean
     private MessageVoService messageVoService;
+    @MockBean
+    private NewsService newsService;
 
     @Test
     void testLoginSuccessShouldWriteUserSession() throws Exception {
@@ -230,5 +243,83 @@ class IntegrationFlowTest {
         if (!(ex.getCause() instanceof LoginException)) {
             throw new AssertionError("Expected LoginException");
         }
+    }
+
+    @Test
+    @Disabled("未实现：submit 应拒绝 hours<=0")
+    @DisplayName("IT-BB-01 - addOrder: hours<=0 时应抛出业务异常")
+    void testAddOrder_NonPositiveHours_ShouldBeRejected() {
+        User loginUser = new User();
+        loginUser.setUserID("u1001");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("user", loginUser);
+
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/addOrder.do")
+                .session(session)
+                .param("venueName", "羽毛球馆A")
+                .param("date", "2026-04-21")
+                .param("startTime", "2026-04-21 10:00")
+                .param("hours", "0")));
+
+        verify(orderService, times(0)).submit(anyString(), any(LocalDateTime.class), anyInt(), anyString());
+    }
+
+    @Test
+    @Disabled("未实现：confirmOrder 应拒绝已通过(STATE_WAIT/FINISH/REJECT)订单")
+    @DisplayName("IT-BB-02 - passOrder: 非法前置状态时应抛出业务异常")
+    void testPassOrder_IllegalState_ShouldBeRejected() {
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/passOrder.do")
+                .param("orderID", "1")));
+
+        verify(orderService, times(0)).confirmOrder(1);
+    }
+
+    @Test
+    @Disabled("未实现：rejectOrder 应拒绝已通过(STATE_WAIT/STATE_FINISH)订单")
+    @DisplayName("IT-BB-03 - rejectOrder: 非法前置状态时应抛出业务异常")
+    void testRejectOrder_IllegalState_ShouldBeRejected() {
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/rejectOrder.do")
+                .param("orderID", "1")));
+
+        verify(orderService, times(0)).rejectOrder(1);
+    }
+
+    @Test
+    @Disabled("未实现：confirmMessage/rejectMessage 应拒绝已处理(STATE_PASS/STATE_REJECT)留言")
+    @DisplayName("IT-BB-04 - passMessage/rejectMessage: 非法前置状态时应抛出业务异常")
+    void testPassOrRejectMessage_IllegalState_ShouldBeRejected() {
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/passMessage.do")
+                .param("messageID", "2")));
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/rejectMessage.do")
+                .param("messageID", "2")));
+
+        verify(messageService, times(0)).confirmMessage(2);
+        verify(messageService, times(0)).rejectMessage(2);
+    }
+
+    @Test
+    @Disabled("未实现：create(content) 应拒绝空内容")
+    @DisplayName("IT-BB-05 - sendMessage: content 为空时应抛出业务异常")
+    void testSendMessage_EmptyContent_ShouldBeRejected() {
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/sendMessage")
+                .param("userID", "u1001")
+                .param("content", "")));
+
+        verify(messageService, times(0)).create(any(Message.class));
+    }
+
+    @Test
+    @Disabled("未实现：news.create(title/content) 应拒绝空值")
+    @DisplayName("IT-BB-06 - addNews: title 或 content 为空时应抛出业务异常")
+    void testAddNews_EmptyTitleOrContent_ShouldBeRejected() {
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/addNews.do")
+                .param("title", "")
+                .param("content", "有效内容")));
+
+        assertThrows(Exception.class, () -> mockMvc.perform(post("/addNews.do")
+                .param("title", "有效标题")
+                .param("content", "")));
+
+        verify(newsService, times(0)).create(any());
     }
 }
