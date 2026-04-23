@@ -6,7 +6,7 @@
 |----------|----|
 | 模块名称  | `MessageServiceImpl` |
 | 负责成员  | 俞楚凡 |
-| 用例编号段 | `UT-MG-001 ~ UT-MG-099` |
+| 用例编号段 | `UT-MG-001 ~ UT-MG-042` |
 | 创建日期  | 2026-04-13 |
 | 最后更新  | 2026-04-16 |
 
@@ -23,6 +23,8 @@
 ## confirmMessage
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:confirmMessage(int messageID)`
+**测试函数**：（待补全）
+**设计技术**：`等价类划分`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
