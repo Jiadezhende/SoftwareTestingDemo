@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.demo.exception.LoginException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -205,18 +206,16 @@ class UserServiceImplTest {
     }
 
     @Test
-    @Disabled("未实现：checkLogin 应在 userID 为 null 时直接拒绝，不应调用 DAO")
-    @DisplayName("UT-US-015 - checkLogin: userID 为 null 时服务层应抛出异常")
+    @DisplayName("UT-US-015 - checkLogin: userID 为 null 时服务层应抛出 LoginException 且不调用 DAO")
     void testCheckLogin_EC15_nullUserID() {
-        assertThrows(Exception.class, () -> userService.checkLogin(null, "123456"));
+        assertThrows(LoginException.class, () -> userService.checkLogin(null, "123456"));
         verify(userDao, never()).findByUserIDAndPassword(any(), any());
     }
 
     @Test
-    @Disabled("未实现：checkLogin 应在 password 为 null 时直接拒绝，不应调用 DAO")
-    @DisplayName("UT-US-016 - checkLogin: password 为 null 时服务层应抛出异常")
+    @DisplayName("UT-US-016 - checkLogin: password 为 null 时服务层应抛出 LoginException 且不调用 DAO")
     void testCheckLogin_EC16_nullPassword() {
-        assertThrows(Exception.class, () -> userService.checkLogin("user001", null));
+        assertThrows(LoginException.class, () -> userService.checkLogin("user001", null));
         verify(userDao, never()).findByUserIDAndPassword(any(), any());
     }
 

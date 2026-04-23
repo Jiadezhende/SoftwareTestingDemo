@@ -17,6 +17,7 @@
 | v1.0 | 2026-04-18 | | 初稿创建，按等价类划分补全全部用例 |
 | v1.1 | 2026-04-21 | | 补充黑盒分析发现的待实现需求用例 UT-US-028~029（@Disabled） |
 | v1.2 | 2026-04-23 | | 测试类迁移至 `com.demo.service.impl.UserServiceImplTest`，同步更新测试函数路径 |
+| v1.3 | 2026-04-23 | | UT-US-015/016 从 @Disabled 改为 enabled：checkLogin 已实现，null 入参防御为缺陷（非未实现功能）；断言从 Exception 改为 LoginException |
 
 ---
 
@@ -119,8 +120,8 @@
 | UT-US-012 | EC12 | 密码错误时返回 null | `"user001"`, `"wrong"` | 返回 null | 通过 | 正确 |
 | UT-US-013 | EC13 | 账号不存在时返回 null | `"nobody"`, `"123456"` | 返回 null | 通过 | 正确 |
 | UT-US-014 | EC14 | 密码为空字符串时返回 null | `"user001"`, `""` | 返回 null | 通过 | 正确 |
-| UT-US-015 | EC15 | userID 为 null 时返回 null | `null`, `"123456"` | 返回 null | 通过 | 正确 |
-| UT-US-016 | EC16 | password 为 null 时返回 null | `"user001"`, `null` | 返回 null | 通过 | 正确 |
+| UT-US-015 | EC15 | userID 为 null 时服务层应抛出 LoginException，不应调用 DAO | `null`, `"123456"` | 抛出 `LoginException`，且不调用 `userDao.findByUserIDAndPassword` | 失败（缺陷暴露） | 错误 |
+| UT-US-016 | EC16 | password 为 null 时服务层应抛出 LoginException，不应调用 DAO | `"user001"`, `null` | 抛出 `LoginException`，且不调用 `userDao.findByUserIDAndPassword` | 失败（缺陷暴露） | 错误 |
 
 ---
 

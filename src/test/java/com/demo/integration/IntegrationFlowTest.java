@@ -250,8 +250,7 @@ class IntegrationFlowTest {
     // ==================== 黑盒自查占位（@Disabled） ====================
 
     @Test
-    @Disabled("未实现：submit 应拒绝 hours<=0")
-    @DisplayName("IT-BB-01 - addOrder: hours<=0 时应抛出业务异常")
+    @DisplayName("IT-BB-01 - addOrder: hours<=0 时应抛出业务异常（已知服务层缺陷 UT-OR-005）")
     void testAddOrder_NonPositiveHours_ShouldBeRejected() {
         User loginUser = new User();
         loginUser.setUserID("u1001");
@@ -269,8 +268,7 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @Disabled("未实现：confirmOrder 应拒绝已通过(STATE_WAIT/FINISH/REJECT)订单")
-    @DisplayName("IT-BB-02 - passOrder: 非法前置状态时应抛出业务异常")
+    @DisplayName("IT-BB-02 - passOrder: 非法前置状态时应抛出业务异常（已知服务层缺陷 UT-OR-018）")
     void testPassOrder_IllegalState_ShouldBeRejected() {
         assertThrows(Exception.class, () -> mockMvc.perform(post("/passOrder.do")
                 .param("orderID", "1")));
@@ -279,8 +277,7 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @Disabled("未实现：rejectOrder 应拒绝已通过(STATE_WAIT/STATE_FINISH)订单")
-    @DisplayName("IT-BB-03 - rejectOrder: 非法前置状态时应抛出业务异常")
+    @DisplayName("IT-BB-03 - rejectOrder: 非法前置状态时应抛出业务异常（已知服务层缺陷 UT-OR-020）")
     void testRejectOrder_IllegalState_ShouldBeRejected() {
         assertThrows(Exception.class, () -> mockMvc.perform(post("/rejectOrder.do")
                 .param("orderID", "1")));
