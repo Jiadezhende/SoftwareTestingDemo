@@ -3,7 +3,7 @@
 ## 1. 负责范围
 
 - 负责模块：`OrderServiceImpl`
-- 用例编号段：`UT-OR-001 ~ UT-OR-099`
+- 用例编号段：`UT-OR-001 ~ UT-OR-048`
 - 相关代码：
   - `src/main/java/com/demo/service/impl/OrderServiceImpl.java`
   - `src/test/java/com/demo/service/impl/OrderServiceImplTest.java`
