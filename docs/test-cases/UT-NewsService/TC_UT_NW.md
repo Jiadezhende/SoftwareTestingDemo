@@ -24,6 +24,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:findAll(Pageable pageable)`
 **测试函数**：`testFindAll()`、`testFindAllBoundaryWithEmptyPage()`、`testFindAllException()`、`testFindAllExceptionWithNullPageable()`
+**设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
 
@@ -61,6 +62,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:findById(int newsID)`
 **测试函数**：`testFindById()`、`testFindByIdBoundaryWithZeroId()`、`testFindByIdException()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -72,6 +74,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:create(News news)`
 **测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`、`testCreate_EmptyTitle_ShouldBeRejected()`、`testCreate_EmptyContent_ShouldBeRejected()`
+**设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
 
@@ -117,6 +120,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:delById(int newsID)`
 **测试函数**：`testDelById()`、`testDelByIdBoundaryWithZeroId()`、`testDelByIdException()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -128,6 +132,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:update(News news)`
 **测试函数**：`testUpdate()`、`testUpdateBoundaryWithZeroId()`、`testUpdateException()`、`testUpdateBoundaryWithNullNews()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 ### 用例设计（等价类/边界值/决策表）
 

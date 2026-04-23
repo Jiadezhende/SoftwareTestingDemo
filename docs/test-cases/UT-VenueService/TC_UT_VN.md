@@ -24,6 +24,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findByVenueID(int id)`
 **测试函数**：`testFindByVenueID()`、`testFindByVenueIDBoundaryWithZeroId()`、`testFindByVenueIDException()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -35,6 +36,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findByVenueName(String venueName)`
 **测试函数**：`testFindByVenueName()`、`testFindByVenueNameBoundaryWithEmptyName()`、`testFindByVenueNameException()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -46,6 +48,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findAll(Pageable pageable)`
 **测试函数**：`testFindAllByPageable()`、`testFindAllByPageableBoundaryWithEmptyPage()`、`testFindAllByPageableException()`、`testFindAllByPageableExceptionWithNullPageable()`
+**设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
 
@@ -83,6 +86,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findAll()`
 **测试函数**：`testFindAll()`、`testFindAllBoundaryWithEmptyList()`、`testFindAllException()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -94,6 +98,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:create(Venue venue)`
 **测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`、`testCreate_NegativePrice_ShouldBeRejected()`、`testCreate_EmptyVenueName_ShouldBeRejected()`、`testCreate_DuplicateVenueName_ShouldBeRejected()`
+**设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
 
@@ -143,6 +148,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:update(Venue venue)`
 **测试函数**：`testUpdate()`、`testUpdateBoundaryWithZeroId()`、`testUpdateException()`、`testUpdateBoundaryWithNullVenue()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 ### 用例设计（等价类/边界值/决策表）
 
@@ -179,6 +185,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:delById(int id)`
 **测试函数**：`testDelById()`、`testDelByIdBoundaryWithZeroId()`、`testDelByIdException()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
@@ -190,6 +197,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:countVenueName(String venueName)`
 **测试函数**：`testCountVenueName()`、`testCountVenueNameBoundaryWithEmptyName()`、`testCountVenueNameException()`、`testCountVenueNameExceptionWithNullName()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 ### 用例设计（等价类/边界值/决策表）
 

@@ -67,9 +67,7 @@
 ## submit
 
 **测试对象**：`src.main.java.com.demo.service.impl.OrderServiceImpl.java:submit(String venueName, LocalDateTime startTime, int hours, String userID)`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testSubmitCreatesOrderWithCalculatedTotal()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testSubmitWithZeroHoursShouldBeRejected()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testSubmitWithUnknownVenueShouldBeRejected()`
+**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testSubmitCreatesOrderWithCalculatedTotal()、testSubmitWithZeroHoursShouldBeRejected()、testSubmitWithUnknownVenueShouldBeRejected()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -83,8 +81,7 @@
 ## updateOrder
 
 **测试对象**：`src.main.java.com.demo.service.impl.OrderServiceImpl.java:updateOrder(int orderID, String venueName, LocalDateTime startTime, int hours, String userID)`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testUpdateOrderUpdatesExistingOrderUsingVenuePrice()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testUpdateOrderWithMissingOrderShouldBeRejected()`
+**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testUpdateOrderUpdatesExistingOrderUsingVenuePrice()、testUpdateOrderWithMissingOrderShouldBeRejected()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -109,9 +106,7 @@
 ## confirmOrder
 
 **测试对象**：`src.main.java.com.demo.service.impl.OrderServiceImpl.java:confirmOrder(int orderID)`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testConfirmOrderUpdatesStateWhenOrderExists()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testConfirmOrderThrowsWhenOrderMissing()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testConfirmOrderInvalidPreStateShouldBeRejected()`
+**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testConfirmOrderUpdatesStateWhenOrderExists()、testConfirmOrderThrowsWhenOrderMissing()、testConfirmOrderInvalidPreStateShouldBeRejected()`
 **设计技术**：`语句覆盖 + 判定覆盖`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -125,9 +120,7 @@
 ## finishOrder
 
 **测试对象**：`src.main.java.com.demo.service.impl.OrderServiceImpl.java:finishOrder(int orderID)`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testFinishOrderUpdatesStateWhenOrderExists()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testFinishOrderThrowsWhenOrderMissing()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testFinishOrderInvalidPreStateShouldBeRejected()`
+**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testFinishOrderUpdatesStateWhenOrderExists()、testFinishOrderThrowsWhenOrderMissing()、testFinishOrderInvalidPreStateShouldBeRejected()`
 **设计技术**：`语句覆盖 + 判定覆盖`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -141,9 +134,7 @@
 ## rejectOrder
 
 **测试对象**：`src.main.java.com.demo.service.impl.OrderServiceImpl.java:rejectOrder(int orderID)`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testRejectOrderUpdatesStateWhenOrderExists()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testRejectOrderThrowsWhenOrderMissing()`
-**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testRejectOrderInvalidPreStateShouldBeRejected()`
+**测试函数**：`src.test.java.com.demo.service.impl.OrderServiceImplTest:testRejectOrderUpdatesStateWhenOrderExists()、testRejectOrderThrowsWhenOrderMissing()、testRejectOrderInvalidPreStateShouldBeRejected()`
 **设计技术**：`语句覆盖 + 判定覆盖`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |

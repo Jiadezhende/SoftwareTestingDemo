@@ -24,7 +24,8 @@
 ## 登录流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.UserController.java:login(String userID, String password, HttpServletRequest)`
-**测试脚本**：`src.test.java.com.demo.integration.IntegrationFlowTest:testLoginSuccessShouldWriteUserSession(), testLoginWrongPasswordShouldReturnFalse()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testLoginSuccessShouldWriteUserSession()、testLoginWrongPasswordShouldReturnFalse()`
+**设计技术**：`场景法 + 等价类划分`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |-----------|---------|---------|---------|---------|------|
@@ -36,7 +37,8 @@
 ## 订单流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.OrderController.java:order_manage(Model, HttpServletRequest), addOrder(String, String, String, int, HttpServletRequest, HttpServletResponse)`
-**测试脚本**：`src.test.java.com.demo.integration.IntegrationFlowTest:testOrderManageWithoutLoginShouldThrowLoginException(), testAddOrderWithLoginShouldRedirectAndInvokeSubmit(), testDeleteOrderWithoutLoginShouldStillInvokeDelete_Vulnerability()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testOrderManageWithoutLoginShouldThrowLoginException()、testAddOrderWithLoginShouldRedirectAndInvokeSubmit()、testDeleteOrderWithoutLoginShouldStillInvokeDelete_Vulnerability()`
+**设计技术**：`场景法`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |-----------|---------|---------|---------|---------|------|
@@ -49,7 +51,8 @@
 ## 场馆流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.VenueController.java:venue_list(int), toGymPage(Model, int)`
-**测试脚本**：`src.test.java.com.demo.integration.IntegrationFlowTest:testVenueListShouldReturnPagedData(), testVenueDetailShouldRenderVenuePage()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testVenueListShouldReturnPagedData()、testVenueDetailShouldRenderVenuePage()`
+**设计技术**：`场景法`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |-----------|---------|---------|---------|---------|------|
@@ -61,7 +64,8 @@
 ## 留言流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.MessageController.java:sendMessage(String, String, HttpServletResponse), user_message_list(int, HttpServletRequest)`
-**测试脚本**：`src.test.java.com.demo.integration.IntegrationFlowTest:testSendMessageShouldRedirectAndPersistDefaultState(), testFindUserMessageWithoutLoginShouldThrowLoginException(), testSendMessageWithoutLoginShouldStillPersist_Vulnerability(), testSendMessageWithForgedUserIdShouldPersistForgedIdentity_Vulnerability(), testDeleteMessageWithoutLoginShouldStillInvokeDelete_Vulnerability()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testSendMessageShouldRedirectAndPersistDefaultState()、testFindUserMessageWithoutLoginShouldThrowLoginException()、testSendMessageWithoutLoginShouldStillPersist_Vulnerability()、testSendMessageWithForgedUserIdShouldPersistForgedIdentity_Vulnerability()、testDeleteMessageWithoutLoginShouldStillInvokeDelete_Vulnerability()`
+**设计技术**：`场景法`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |-----------|---------|---------|---------|---------|------|
@@ -77,7 +81,8 @@
 
 > 说明：以下用例为“需求缺口占位”，已写入 `IntegrationFlowTest` 并使用 `@Disabled` 标记。当前 CI 语义为“跳过=已知缺口待实现”，不污染红绿信号。
 
-**测试脚本**：`src.test.java.com.demo.integration.IntegrationFlowTest:testAddOrder_NonPositiveHours_ShouldBeRejected(), testPassOrder_IllegalState_ShouldBeRejected(), testRejectOrder_IllegalState_ShouldBeRejected(), testPassOrRejectMessage_IllegalState_ShouldBeRejected(), testSendMessage_EmptyContent_ShouldBeRejected(), testAddNews_EmptyTitleOrContent_ShouldBeRejected()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testAddOrder_NonPositiveHours_ShouldBeRejected()、testPassOrder_IllegalState_ShouldBeRejected()、testRejectOrder_IllegalState_ShouldBeRejected()、testPassOrRejectMessage_IllegalState_ShouldBeRejected()、testSendMessage_EmptyContent_ShouldBeRejected()、testAddNews_EmptyTitleOrContent_ShouldBeRejected()`
+**设计技术**：`黑盒等价类划分（需求缺口占位）`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 当前状态 | 结论 |
 |-----------|---------|---------|---------|---------|------|

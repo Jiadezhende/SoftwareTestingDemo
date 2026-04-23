@@ -22,17 +22,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("OrderService 单元测试")
 class OrderServiceImplTest {
 
     @Mock
@@ -44,7 +39,10 @@ class OrderServiceImplTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
+    // ==================== findById ====================
+
     @Test
+    @DisplayName("UT-OR-001 - findById: 输入存在的订单 ID 时返回对应 Order")
     void testFindByIdDelegatesToDao() {
         Order order = buildOrder(1, 11, 2, "userA");
         when(orderDao.getOne(1)).thenReturn(order);
@@ -55,7 +53,10 @@ class OrderServiceImplTest {
         verify(orderDao).getOne(1);
     }
 
+    // ==================== findDateOrder ====================
+
     @Test
+    @DisplayName("UT-OR-002 - findDateOrder: 合法场馆 ID 和时间区间时返回订单列表")
     void testFindDateOrderDelegatesToDao() {
         LocalDateTime start = LocalDateTime.of(2026, 4, 2, 10, 0);
         LocalDateTime end = start.plusHours(3);
@@ -71,7 +72,10 @@ class OrderServiceImplTest {
         verify(orderDao).findByVenueIDAndStartTimeIsBetween(5, start, end);
     }
 
+    // ==================== findUserOrder ====================
+
     @Test
+    @DisplayName("UT-OR-003 - findUserOrder: 合法用户 ID 时返回分页订单")
     void testFindUserOrderDelegatesToDao() {
         Pageable pageable = PageRequest.of(0, 5);
         Page<Order> page = new PageImpl<>(Collections.singletonList(buildOrder(3, 6, 1, "userA")));
@@ -83,7 +87,10 @@ class OrderServiceImplTest {
         verify(orderDao).findAllByUserID("userA", pageable);
     }
 
+    // ==================== submit ====================
+
     @Test
+    @DisplayName("UT-OR-004 - submit: 有效输入时计算金额并保存待审核订单")
     void testSubmitCreatesOrderWithCalculatedTotal() {
         Venue venue = buildVenue(8, "Badminton Hall", 120);
         LocalDateTime startTime = LocalDateTime.of(2026, 4, 3, 9, 0);
@@ -104,6 +111,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-005 - submit: hours=0 时应拒绝并抛出异常")
     void testSubmitWithZeroHoursShouldBeRejected() {
         Venue venue = buildVenue(8, "Badminton Hall", 120);
         LocalDateTime startTime = LocalDateTime.of(2026, 4, 3, 9, 0);
@@ -115,6 +123,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-006 - submit: 场馆不存在时应拒绝并抛出异常")
     void testSubmitWithUnknownVenueShouldBeRejected() {
         LocalDateTime startTime = LocalDateTime.of(2026, 4, 3, 9, 0);
         when(venueDao.findByVenueName("Unknown Venue")).thenReturn(null);
@@ -124,7 +133,10 @@ class OrderServiceImplTest {
         verify(orderDao, never()).save(any(Order.class));
     }
 
+    // ==================== updateOrder ====================
+
     @Test
+    @DisplayName("UT-OR-007 - updateOrder: 有效输入时更新订单并重新计算金额")
     void testUpdateOrderUpdatesExistingOrderUsingVenuePrice() {
         Venue venue = buildVenue(9, "Tennis Court", 150);
         Order existingOrder = buildOrder(7, 3, 2, "oldUser");
@@ -145,6 +157,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-008 - updateOrder: 订单不存在时应拒绝并抛出异常")
     void testUpdateOrderWithMissingOrderShouldBeRejected() {
         Venue venue = buildVenue(9, "Tennis Court", 150);
         LocalDateTime startTime = LocalDateTime.of(2026, 4, 4, 14, 0);
@@ -156,14 +169,20 @@ class OrderServiceImplTest {
         verify(orderDao, never()).save(any(Order.class));
     }
 
+    // ==================== delOrder ====================
+
     @Test
+    @DisplayName("UT-OR-009 - delOrder: 委托 DAO 删除指定订单")
     void testDeleteOrderDelegatesToDao() {
         orderService.delOrder(10);
 
         verify(orderDao).deleteById(10);
     }
 
+    // ==================== confirmOrder / finishOrder / rejectOrder ====================
+
     @Test
+    @DisplayName("UT-OR-010 - confirmOrder: 订单存在时更新状态为 STATE_WAIT")
     void testConfirmOrderUpdatesStateWhenOrderExists() {
         Order order = buildOrder(11, 1, 2, "userA");
         when(orderDao.findByOrderID(11)).thenReturn(order);
@@ -174,6 +193,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-011 - confirmOrder: 订单不存在时抛出异常")
     void testConfirmOrderThrowsWhenOrderMissing() {
         when(orderDao.findByOrderID(12)).thenReturn(null);
 
@@ -182,6 +202,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-012 - finishOrder: 订单存在时更新状态为 STATE_FINISH")
     void testFinishOrderUpdatesStateWhenOrderExists() {
         Order order = buildOrder(13, 2, 2, "userA");
         when(orderDao.findByOrderID(13)).thenReturn(order);
@@ -192,6 +213,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-013 - finishOrder: 订单不存在时抛出异常")
     void testFinishOrderThrowsWhenOrderMissing() {
         when(orderDao.findByOrderID(14)).thenReturn(null);
 
@@ -200,6 +222,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-014 - rejectOrder: 订单存在时更新状态为 STATE_REJECT")
     void testRejectOrderUpdatesStateWhenOrderExists() {
         Order order = buildOrder(15, 2, 2, "userA");
         when(orderDao.findByOrderID(15)).thenReturn(order);
@@ -210,6 +233,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-015 - rejectOrder: 订单不存在时抛出异常")
     void testRejectOrderThrowsWhenOrderMissing() {
         when(orderDao.findByOrderID(16)).thenReturn(null);
 
@@ -218,7 +242,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("BB-SC-06 - confirmOrder: STATE_WAIT/STATE_FINISH/STATE_REJECT 时应抛出异常")
+    @DisplayName("UT-OR-018 - confirmOrder: 非 STATE_NO_AUDIT 前置状态时应抛出异常")
     void testConfirmOrderInvalidPreStateShouldBeRejected() {
         Order order = buildOrder(20, 2, OrderService.STATE_WAIT, "userA");
         when(orderDao.findByOrderID(20)).thenReturn(order);
@@ -228,7 +252,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("BB-SC-07 - finishOrder: STATE_NO_AUDIT/STATE_REJECT 时应抛出异常")
+    @DisplayName("UT-OR-019 - finishOrder: 非 STATE_WAIT 前置状态时应抛出异常")
     void testFinishOrderInvalidPreStateShouldBeRejected() {
         Order order = buildOrder(21, 2, OrderService.STATE_NO_AUDIT, "userA");
         when(orderDao.findByOrderID(21)).thenReturn(order);
@@ -238,7 +262,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("BB-SC-08 - rejectOrder: STATE_WAIT/STATE_FINISH 时应抛出异常")
+    @DisplayName("UT-OR-020 - rejectOrder: 非 STATE_NO_AUDIT 前置状态时应抛出异常")
     void testRejectOrderInvalidPreStateShouldBeRejected() {
         Order order = buildOrder(22, 2, OrderService.STATE_WAIT, "userA");
         when(orderDao.findByOrderID(22)).thenReturn(order);
@@ -247,7 +271,10 @@ class OrderServiceImplTest {
         verify(orderDao, never()).updateState(anyInt(), anyInt());
     }
 
+    // ==================== findNoAuditOrder / findAuditOrder ====================
+
     @Test
+    @DisplayName("UT-OR-016 - findNoAuditOrder: 委托 DAO 查询待审核分页订单")
     void testFindNoAuditOrderDelegatesToDao() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Order> page = new PageImpl<>(Collections.singletonList(buildOrder(17, 5, 1, "userC")));
@@ -260,6 +287,7 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-OR-017 - findAuditOrder: 委托 DAO 查询已审核订单列表")
     void testFindAuditOrderDelegatesToDao() {
         List<Order> orders = Arrays.asList(
                 buildOrder(18, 5, OrderService.STATE_WAIT, "userD"),

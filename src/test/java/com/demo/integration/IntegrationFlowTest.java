@@ -37,22 +37,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = {
@@ -65,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         AdminMessageController.class,
         AdminNewsController.class
 })
+@DisplayName("集成测试 — 业务流程")
 class IntegrationFlowTest {
 
     @Autowired
@@ -85,7 +75,10 @@ class IntegrationFlowTest {
     @MockBean
     private NewsService newsService;
 
+    // ==================== 登录流程 ====================
+
     @Test
+    @DisplayName("IT-LG-001 - login: 合法用户提交正确用户名与密码时写入 Session 并返回 /index")
     void testLoginSuccessShouldWriteUserSession() throws Exception {
         User user = new User();
         user.setUserID("u1001");
@@ -101,6 +94,7 @@ class IntegrationFlowTest {
     }
 
     @Test
+    @DisplayName("IT-LG-002 - login: 用户名存在但密码错误时返回 false")
     void testLoginWrongPasswordShouldReturnFalse() throws Exception {
         when(userService.checkLogin("u1001", "bad")).thenReturn(null);
 
@@ -111,7 +105,10 @@ class IntegrationFlowTest {
                 .andExpect(content().string("false"));
     }
 
+    // ==================== 订单流程 ====================
+
     @Test
+    @DisplayName("IT-OR-001 - order_manage: 未登录直接访问 /order_manage 时抛出 LoginException")
     void testOrderManageWithoutLoginShouldThrowLoginException() throws Exception {
         NestedServletException ex = assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/order_manage")));
@@ -119,6 +116,7 @@ class IntegrationFlowTest {
     }
 
     @Test
+    @DisplayName("IT-OR-002 - addOrder: 已登录用户提交合法订单参数时重定向并调用 submit")
     void testAddOrderWithLoginShouldRedirectAndInvokeSubmit() throws Exception {
         User loginUser = new User();
         loginUser.setUserID("u1001");
@@ -138,6 +136,7 @@ class IntegrationFlowTest {
     }
 
     @Test
+    @DisplayName("IT-OR-003 - delOrder: 未登录直接调用 /delOrder.do 删除订单（安全漏洞：未做登录校验）")
     void testDeleteOrderWithoutLoginShouldStillInvokeDelete_Vulnerability() throws Exception {
         mockMvc.perform(post("/delOrder.do")
                         .param("orderID", "1"))
@@ -147,7 +146,10 @@ class IntegrationFlowTest {
         verify(orderService, times(1)).delOrder(1);
     }
 
+    // ==================== 场馆流程 ====================
+
     @Test
+    @DisplayName("IT-VN-001 - venue_list: 请求第一页场馆数据时返回分页 JSON 且 content 非空")
     void testVenueListShouldReturnPagedData() throws Exception {
         Venue venue = new Venue();
         venue.setVenueID(1);
@@ -161,6 +163,7 @@ class IntegrationFlowTest {
     }
 
     @Test
+    @DisplayName("IT-VN-002 - toGymPage: 通过 venueID 访问场馆详情页时返回含场馆名的页面")
     void testVenueDetailShouldRenderVenuePage() throws Exception {
         Venue venue = new Venue();
         venue.setVenueID(1);
@@ -172,7 +175,10 @@ class IntegrationFlowTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("羽毛球馆A")));
     }
 
+    // ==================== 留言流程 ====================
+
     @Test
+    @DisplayName("IT-MG-001 - sendMessage: 用户提交留言时重定向 /message_list 且默认状态为未审核")
     void testSendMessageShouldRedirectAndPersistDefaultState() throws Exception {
         mockMvc.perform(post("/sendMessage")
                         .param("userID", "u1001")
@@ -187,6 +193,15 @@ class IntegrationFlowTest {
     }
 
     @Test
+    @DisplayName("IT-MG-002 - user_message_list: 未登录访问 /message/findUserList 时抛出 LoginException")
+    void testFindUserMessageWithoutLoginShouldThrowLoginException() throws Exception {
+        NestedServletException ex = assertThrows(NestedServletException.class,
+                () -> mockMvc.perform(get("/message/findUserList").param("page", "1")));
+                assertTrue(ex.getCause() instanceof LoginException);
+    }
+
+    @Test
+    @DisplayName("IT-MG-003 - sendMessage: 未登录直接调用 /sendMessage 提交留言（安全漏洞：未做登录校验）")
     void testSendMessageWithoutLoginShouldStillPersist_Vulnerability() throws Exception {
         mockMvc.perform(post("/sendMessage")
                         .param("userID", "u9999")
@@ -201,6 +216,7 @@ class IntegrationFlowTest {
     }
 
     @Test
+    @DisplayName("IT-MG-004 - sendMessage: 登录用户在参数中提交他人 userID 时伪造身份被持久化（安全漏洞）")
     void testSendMessageWithForgedUserIdShouldPersistForgedIdentity_Vulnerability() throws Exception {
         User loginUser = new User();
         loginUser.setUserID("u1001");
@@ -221,6 +237,7 @@ class IntegrationFlowTest {
     }
 
     @Test
+    @DisplayName("IT-MG-005 - delMessage: 未登录直接调用 /delMessage.do 删除留言（安全漏洞：未做登录校验）")
     void testDeleteMessageWithoutLoginShouldStillInvokeDelete_Vulnerability() throws Exception {
         mockMvc.perform(post("/delMessage.do")
                         .param("messageID", "11"))
@@ -230,12 +247,7 @@ class IntegrationFlowTest {
         verify(messageService, times(1)).delById(11);
     }
 
-    @Test
-    void testFindUserMessageWithoutLoginShouldThrowLoginException() throws Exception {
-        NestedServletException ex = assertThrows(NestedServletException.class,
-                () -> mockMvc.perform(get("/message/findUserList").param("page", "1")));
-                assertTrue(ex.getCause() instanceof LoginException);
-    }
+    // ==================== 黑盒自查占位（@Disabled） ====================
 
     @Test
     @Disabled("未实现：submit 应拒绝 hours<=0")
