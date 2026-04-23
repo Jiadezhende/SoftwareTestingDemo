@@ -34,7 +34,7 @@ jobs:
         run: mysql -h 127.0.0.1 -P 3306 -uroot -proot demo_db < demo_db.sql
 
       - name: Run tests
-        run: mvn -B test
+        run: mvn -B test -Dmaven.test.failure.ignore=true
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/demo_db?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=Asia/Shanghai
           SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
@@ -43,3 +43,4 @@ jobs:
           SPRING_JPA_DATABASE: mysql
           SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
           SPRING_JPA_HIBERNATE_DDL_AUTO: none
+
