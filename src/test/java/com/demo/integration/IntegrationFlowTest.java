@@ -5,12 +5,19 @@ import com.demo.controller.user.NewsController;
 import com.demo.controller.user.OrderController;
 import com.demo.controller.user.UserController;
 import com.demo.controller.user.VenueController;
+import com.demo.controller.IndexController;
 import com.demo.controller.admin.AdminMessageController;
 import com.demo.controller.admin.AdminNewsController;
 import com.demo.controller.admin.AdminOrderController;
+import com.demo.controller.admin.AdminUserController;
+import com.demo.controller.admin.AdminVenueController;
 import com.demo.entity.Message;
+import com.demo.entity.News;
+import com.demo.entity.Order;
 import com.demo.entity.User;
 import com.demo.entity.Venue;
+import com.demo.entity.vo.MessageVo;
+import com.demo.entity.vo.OrderVo;
 import com.demo.exception.LoginException;
 import com.demo.service.MessageService;
 import com.demo.service.MessageVoService;
@@ -25,15 +32,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -56,6 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = {
+        IndexController.class,
         UserController.class,
         OrderController.class,
         VenueController.class,
@@ -63,12 +75,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         NewsController.class,
         AdminOrderController.class,
         AdminMessageController.class,
-        AdminNewsController.class
+        AdminNewsController.class,
+        AdminUserController.class,
+        AdminVenueController.class
 })
 class IntegrationFlowTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+        private MvcResult performAndReturn(org.springframework.test.web.servlet.RequestBuilder requestBuilder) throws Exception {
+                return mockMvc.perform(requestBuilder).andReturn();
+        }
 
     @MockBean
     private UserService userService;
@@ -171,6 +189,152 @@ class IntegrationFlowTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("羽毛球馆A")));
     }
+
+        @Test
+        void testIndexPageShouldRenderAggregatedData() throws Exception {
+                Venue venue = new Venue();
+                venue.setVenueID(1);
+                venue.setVenueName("羽毛球馆A");
+
+                News news = new News();
+                news.setNewsID(10);
+                news.setTitle("系统公告");
+
+                Message message = new Message();
+                message.setMessageID(7);
+                message.setUserID("u1001");
+
+                MessageVo messageVo = new MessageVo();
+                when(venueService.findAll(any())).thenReturn(new PageImpl<>(Collections.singletonList(venue)));
+                when(newsService.findAll(any())).thenReturn(new PageImpl<>(Collections.singletonList(news)));
+                when(messageService.findPassState(any())).thenReturn(new PageImpl<>(Collections.singletonList(message)));
+                when(messageVoService.returnVo(any())).thenReturn(Collections.singletonList(messageVo));
+
+                MvcResult result = performAndReturn(get("/index"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("羽毛球馆A"));
+                assertTrue(content.contains("系统公告"));
+        }
+
+        @Test
+        void testAdminIndexShouldRenderPage() throws Exception {
+                        MvcResult result = performAndReturn(get("/admin_index"));
+                        String content = result.getResponse().getContentAsString();
+                        assertEquals(200, result.getResponse().getStatus());
+                        assertTrue(content.contains("管理系统"));
+        }
+
+        @Test
+        void testAdminReservationManageShouldRenderPage() throws Exception {
+                Order order = new Order();
+                OrderVo orderVo = new OrderVo();
+                when(orderService.findAuditOrder()).thenReturn(Collections.singletonList(order));
+                when(orderVoService.returnVo(any())).thenReturn(Collections.singletonList(orderVo));
+                when(orderService.findNoAuditOrder(any())).thenReturn(new PageImpl<>(Collections.singletonList(order)));
+
+                MvcResult result = performAndReturn(get("/reservation_manage"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("reservation"));
+        }
+
+        @Test
+        void testAdminGetOrderListShouldReturnJson() throws Exception {
+                Order order = new Order();
+                OrderVo orderVo = new OrderVo();
+                when(orderService.findNoAuditOrder(any())).thenReturn(new PageImpl<>(Collections.singletonList(order)));
+                when(orderVoService.returnVo(any())).thenReturn(Collections.singletonList(orderVo));
+
+                MvcResult result = performAndReturn(get("/admin/getOrderList.do").param("page", "1"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.startsWith("["));
+        }
+
+        @Test
+        void testAdminMessageManageShouldRenderPage() throws Exception {
+                Message message = new Message();
+                when(messageService.findWaitState(any())).thenReturn(new PageImpl<>(Collections.singletonList(message)));
+
+                MvcResult result = performAndReturn(get("/message_manage"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("message"));
+        }
+
+        @Test
+        void testAdminMessageListShouldReturnJson() throws Exception {
+                Message message = new Message();
+                MessageVo messageVo = new MessageVo();
+                when(messageService.findWaitState(any())).thenReturn(new PageImpl<>(Collections.singletonList(message)));
+                when(messageVoService.returnVo(any())).thenReturn(Collections.singletonList(messageVo));
+
+                MvcResult result = performAndReturn(get("/messageList.do").param("page", "1"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.startsWith("["));
+        }
+
+        @Test
+        void testAdminNewsManageShouldRenderPage() throws Exception {
+                News news = new News();
+                when(newsService.findAll(any())).thenReturn(new PageImpl<>(Collections.singletonList(news)));
+
+                MvcResult result = performAndReturn(get("/news_manage"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("news"));
+        }
+
+        @Test
+        void testAdminUserListShouldReturnJson() throws Exception {
+                User user = new User();
+                user.setUserID("u1001");
+                when(userService.findByUserID(any(Pageable.class))).thenReturn(new PageImpl<>(Collections.singletonList(user)));
+
+                MvcResult result = performAndReturn(get("/userList.do").param("page", "1"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.startsWith("["));
+                assertTrue(content.contains("u1001"));
+        }
+
+        @Test
+        void testAdminCheckUserIdShouldReturnAvailability() throws Exception {
+                when(userService.countUserID("u1001")).thenReturn(0);
+
+                MvcResult result = performAndReturn(post("/checkUserID.do").param("userID", "u1001"));
+                assertEquals(200, result.getResponse().getStatus());
+                assertEquals("true", result.getResponse().getContentAsString());
+        }
+
+        @Test
+        void testAdminVenueListShouldReturnJson() throws Exception {
+                Venue v1 = new Venue();
+                v1.setVenueID(1);
+                v1.setVenueName("A馆");
+                Venue v2 = new Venue();
+                v2.setVenueID(2);
+                v2.setVenueName("B馆");
+                when(venueService.findAll(any())).thenReturn(new PageImpl<>(Arrays.asList(v1, v2)));
+
+                MvcResult result = performAndReturn(get("/venueList.do").param("page", "1"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.startsWith("["));
+                assertTrue(content.contains("\"venueID\":1"));
+                assertTrue(content.contains("\"venueID\":2"));
+        }
+
+        @Test
+        void testAdminCheckVenueNameShouldReturnAvailability() throws Exception {
+                when(venueService.countVenueName("羽毛球馆A")).thenReturn(0);
+
+                MvcResult result = performAndReturn(post("/checkVenueName.do").param("venueName", "羽毛球馆A"));
+                assertEquals(200, result.getResponse().getStatus());
+                assertEquals("true", result.getResponse().getContentAsString());
+        }
 
     @Test
     void testSendMessageShouldRedirectAndPersistDefaultState() throws Exception {
