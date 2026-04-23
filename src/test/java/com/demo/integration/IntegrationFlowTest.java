@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
@@ -246,10 +245,9 @@ class IntegrationFlowTest {
                 when(orderService.findNoAuditOrder(any())).thenReturn(new PageImpl<>(Collections.singletonList(order)));
                 when(orderVoService.returnVo(any())).thenReturn(Collections.singletonList(orderVo));
 
-                MvcResult result = performAndReturn(get("/admin/getOrderList.do").param("page", "1"));
-                String content = result.getResponse().getContentAsString();
-                assertEquals(200, result.getResponse().getStatus());
-                assertTrue(content.startsWith("["));
+                mockMvc.perform(get("/admin/getOrderList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)));
         }
 
         @Test
@@ -270,10 +268,9 @@ class IntegrationFlowTest {
                 when(messageService.findWaitState(any())).thenReturn(new PageImpl<>(Collections.singletonList(message)));
                 when(messageVoService.returnVo(any())).thenReturn(Collections.singletonList(messageVo));
 
-                MvcResult result = performAndReturn(get("/messageList.do").param("page", "1"));
-                String content = result.getResponse().getContentAsString();
-                assertEquals(200, result.getResponse().getStatus());
-                assertTrue(content.startsWith("["));
+                mockMvc.perform(get("/messageList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)));
         }
 
         @Test
@@ -293,11 +290,10 @@ class IntegrationFlowTest {
                 user.setUserID("u1001");
                 when(userService.findByUserID(any(Pageable.class))).thenReturn(new PageImpl<>(Collections.singletonList(user)));
 
-                MvcResult result = performAndReturn(get("/userList.do").param("page", "1"));
-                String content = result.getResponse().getContentAsString();
-                assertEquals(200, result.getResponse().getStatus());
-                assertTrue(content.startsWith("["));
-                assertTrue(content.contains("u1001"));
+                mockMvc.perform(get("/userList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)))
+                                .andExpect(jsonPath("$[0].userID").value("u1001"));
         }
 
         @Test
@@ -319,12 +315,11 @@ class IntegrationFlowTest {
                 v2.setVenueName("B馆");
                 when(venueService.findAll(any())).thenReturn(new PageImpl<>(Arrays.asList(v1, v2)));
 
-                MvcResult result = performAndReturn(get("/venueList.do").param("page", "1"));
-                String content = result.getResponse().getContentAsString();
-                assertEquals(200, result.getResponse().getStatus());
-                assertTrue(content.startsWith("["));
-                assertTrue(content.contains("\"venueID\":1"));
-                assertTrue(content.contains("\"venueID\":2"));
+                mockMvc.perform(get("/venueList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(2)))
+                                .andExpect(jsonPath("$[0].venueID").value(1))
+                                .andExpect(jsonPath("$[1].venueID").value(2));
         }
 
         @Test
