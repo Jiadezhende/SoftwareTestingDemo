@@ -91,11 +91,11 @@
 
 | 缺陷编号 | 关联用例 | 缺陷描述 | 严重程度 |
 |---------|---------|---------|---------|
-| BUG-002 | UT-MG-008 | create 方法未校验 content 是否为 null，允许创建无内容的留言 | 中 |
-| BUG-003 | UT-MG-009 | create 方法未校验 content 是否为空字符串，允许创建空内容的留言 | 中 |
-| BUG-004 | UT-MG-016 | update 方法未校验留言是否存在，不存在的留言被 JPA save() 当作新增处理 | 高 |
-| BUG-005 | UT-MG-036 | create 方法未校验 state 合法性，state=0（非法值）可正常保存 | 中 |
-| BUG-006 | UT-MG-039 | create 方法未校验 state 合法性，state=4（非法值）可正常保存 | 中 |
+| BUG-022 | UT-MG-008 | create 方法未校验 content 是否为 null，允许创建无内容的留言 | 中 |
+| BUG-023 | UT-MG-009 | create 方法未校验 content 是否为空字符串，允许创建空内容的留言 | 中 |
+| BUG-024 | UT-MG-016 | update 方法未校验留言是否存在，不存在的留言被 JPA save() 当作新增处理 | 高 |
+| BUG-025 | UT-MG-036 | create 方法未校验 state 合法性，state=0（非法值）可正常保存 | 中 |
+| BUG-026 | UT-MG-039 | create 方法未校验 state 合法性，state=4（非法值）可正常保存 | 中 |
 
 **MessageServiceImpl 模块测试总结：**
 

@@ -165,7 +165,7 @@ public class MessageServiceImplTest {
 
     /**
      * UT-MG-008: 传入 content 为 null 的 Message
-     * 预期：应拒绝创建，抛出异常。当前代码未校验，此测试将失败（BUG-002）。
+     * 预期：应拒绝创建，抛出异常。当前代码未校验，此测试将失败（BUG-022）。
      */
     @Test
     @DisplayName("UT-MG-008: create - content为null应被拒绝")
@@ -184,7 +184,7 @@ public class MessageServiceImplTest {
 
     /**
      * UT-MG-009: 传入 content 为空字符串的 Message
-     * 预期：应拒绝创建，抛出异常。当前代码未校验，此测试将失败（BUG-003）。
+     * 预期：应拒绝创建，抛出异常。当前代码未校验，此测试将失败（BUG-023）。
      */
     @Test
     @DisplayName("UT-MG-009: create - content为空字符串应被拒绝")
@@ -292,7 +292,7 @@ public class MessageServiceImplTest {
 
     /**
      * UT-MG-016: 传入不存在的留言（messageID=9999）
-     * 预期：应拒绝更新，抛出异常。当前代码未校验存在性，此测试将失败（BUG-004）。
+     * 预期：应拒绝更新，抛出异常。当前代码未校验存在性，此测试将失败（BUG-024）。
      */
     @Test
     @DisplayName("UT-MG-016: update - 不存在的留言应被拒绝")
@@ -630,7 +630,7 @@ public class MessageServiceImplTest {
 
     /**
      * UT-MG-036: create 传入 state=0（下界-1，非法状态）
-     * 预期：应拒绝创建，抛出异常。当前代码未校验 state 合法性，此测试将失败（BUG-005）。
+     * 预期：应拒绝创建，抛出异常。当前代码未校验 state 合法性，此测试将失败（BUG-025）。
      */
     @Test
     @DisplayName("UT-MG-036: create - state=0（下界-1，非法）应被拒绝")
@@ -687,7 +687,7 @@ public class MessageServiceImplTest {
 
     /**
      * UT-MG-039: create 传入 state=4（上界+1，非法状态）
-     * 预期：应拒绝创建，抛出异常。当前代码未校验 state 合法性，此测试将失败（BUG-006）。
+     * 预期：应拒绝创建，抛出异常。当前代码未校验 state 合法性，此测试将失败（BUG-026）。
      */
     @Test
     @DisplayName("UT-MG-039: create - state=4（上界+1，非法）应被拒绝")
