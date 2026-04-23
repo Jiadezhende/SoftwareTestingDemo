@@ -11,13 +11,22 @@
 
 | 缺陷编号 | 发现人 | 发现日期 | 所属类型 | 关联用例 | 缺陷描述 | 严重程度 | 状态 | 备注 |
 |---------|--------|----------|---------|----------|----------|---------|------|------|
-| BUG-001 | 示例 | 2026-03-22 | 单元测试 | UT-US-002 | checkLogin 传入空密码时抛出 NPE | 高 | 新建 | 示例记录 |
-| BUG-002 | 成员B | 2026-04-02 | 单元测试 | UT-OR-005 | submit 接收 `hours=0` 时仍保存订单，未拦截无效预约时长 | 中 | 新建 | 边界值缺陷 |
-| BUG-003 | 成员B | 2026-04-02 | 单元测试 | UT-OR-006 | submit 接收不存在的 `venueName` 时直接抛出 `NullPointerException` | 高 | 新建 | 缺少空值防护 |
-| BUG-004 | 成员B | 2026-04-02 | 单元测试 | UT-OR-008 | updateOrder 接收不存在的 `orderID` 时直接抛出 `NullPointerException` | 高 | 新建 | 与 confirm/finish/reject 的异常处理不一致 |
-| BUG-005 | 成员B | 2026-04-21 | 单元测试 | UT-OR-018 | confirmOrder 未校验前置状态，`STATE_WAIT / STATE_FINISH / STATE_REJECT` 仍可重复确认 | 高 | 新建 | 状态机缺陷 |
-| BUG-006 | 成员B | 2026-04-21 | 单元测试 | UT-OR-019 | finishOrder 未校验前置状态，`STATE_NO_AUDIT / STATE_REJECT` 仍可直接完成 | 高 | 新建 | 状态机缺陷 |
-| BUG-007 | 成员B | 2026-04-21 | 单元测试 | UT-OR-020 | rejectOrder 未校验前置状态，`STATE_WAIT / STATE_FINISH` 仍可被拒绝 | 高 | 新建 | 状态机缺陷 |
+| BUG-001 | 示例 | 2026-03-22 | 单元测试 | UT-US-002 | `checkLogin` 传入空密码时抛出 `NullPointerException` | 高 | 新建 | 示例记录 |
+| BUG-002 | 成员B | 2026-04-02 | 单元测试 | UT-OR-005, UT-OR-048 | `submit` 接收 `hours<=0` 时仍保存订单，未拦截无效预约时长 | 中 | 新建 | 边界值与无效类共用同一根因 |
+| BUG-003 | 成员B | 2026-04-02 | 单元测试 | UT-OR-006 | `submit` 接收不存在的 `venueName` 时直接抛出 `NullPointerException` | 高 | 新建 | 缺少空值防护 |
+| BUG-004 | 成员B | 2026-04-02 | 单元测试 | UT-OR-008 | `updateOrder` 接收不存在的 `orderID` 时直接抛出 `NullPointerException` | 高 | 新建 | 与状态流转方法的异常处理不一致 |
+| BUG-005 | 成员B | 2026-04-21 | 单元测试 | UT-OR-018 | `confirmOrder` 未校验前置状态，非法前置状态下仍可重复确认 | 高 | 新建 | 状态机缺陷，文档使用代表状态值 |
+| BUG-006 | 成员B | 2026-04-21 | 单元测试 | UT-OR-019 | `finishOrder` 未校验前置状态，非法前置状态下仍可直接完成 | 高 | 新建 | 状态机缺陷，文档使用代表状态值 |
+| BUG-007 | 成员B | 2026-04-21 | 单元测试 | UT-OR-020 | `rejectOrder` 未校验前置状态，非法前置状态下仍可被拒绝 | 高 | 新建 | 状态机缺陷，文档使用代表状态值 |
+| BUG-008 | 成员B | 2026-04-23 | 单元测试 | UT-OR-024, UT-OR-050 | `updateOrder` 接收 `hours<=0` 时仍更新并保存订单，未拦截无效修改时长 | 中 | 新建 | 边界值缺陷 |
+| BUG-009 | 成员B | 2026-04-23 | 单元测试 | UT-OR-039 | `submit` 接收 `startTime=null` 时未做空值校验，仍继续保存订单 | 高 | 新建 | 缺少必填字段校验 |
+| BUG-010 | 成员B | 2026-04-23 | 单元测试 | UT-OR-040 | `submit` 接收空用户标识时未做校验，仍继续保存订单 | 中 | 新建 | 文档保留代表值 `userID=null` |
+| BUG-011 | 成员B | 2026-04-23 | 单元测试 | UT-OR-041 | `updateOrder` 接收不存在的 `venueName` 时直接抛出 `NullPointerException` | 高 | 新建 | 缺少空值防护 |
+| BUG-012 | 成员B | 2026-04-23 | 单元测试 | UT-OR-042 | `delOrder` 接收非法 `orderID` 时未做校验，仍继续调用 DAO 删除 | 中 | 新建 | 文档保留代表值 `0` |
+| BUG-013 | 成员B | 2026-04-23 | 单元测试 | UT-OR-043 | `findDateOrder` 接收 `startTime > endTime` 的非法时间区间时未做校验，仍继续调用 DAO 查询 | 中 | 新建 | 缺少时间区间校验 |
+| BUG-014 | 成员B | 2026-04-23 | 单元测试 | UT-OR-044 | `findById` 接收非法 `orderID` 时未做校验，仍继续调用 DAO 查询 | 中 | 新建 | 文档保留代表值 `0` |
+| BUG-015 | 成员B | 2026-04-23 | 单元测试 | UT-OR-045 | `findUserOrder` 接收空用户标识时未做校验，仍继续调用 DAO 查询 | 中 | 新建 | 文档保留代表值 `userID=null` |
+| BUG-016 | 成员B | 2026-04-23 | 单元测试 | UT-OR-046 | `findNoAuditOrder` 接收 `pageable=null` 时未做校验，仍继续调用 DAO 查询 | 中 | 新建 | 缺少分页参数校验 |
 
 ---
 
