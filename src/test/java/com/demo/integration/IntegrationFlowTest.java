@@ -5,12 +5,19 @@ import com.demo.controller.user.NewsController;
 import com.demo.controller.user.OrderController;
 import com.demo.controller.user.UserController;
 import com.demo.controller.user.VenueController;
+import com.demo.controller.IndexController;
 import com.demo.controller.admin.AdminMessageController;
 import com.demo.controller.admin.AdminNewsController;
 import com.demo.controller.admin.AdminOrderController;
+import com.demo.controller.admin.AdminUserController;
+import com.demo.controller.admin.AdminVenueController;
 import com.demo.entity.Message;
+import com.demo.entity.News;
+import com.demo.entity.Order;
 import com.demo.entity.User;
 import com.demo.entity.Venue;
+import com.demo.entity.vo.MessageVo;
+import com.demo.entity.vo.OrderVo;
 import com.demo.exception.LoginException;
 import com.demo.service.MessageService;
 import com.demo.service.MessageVoService;
@@ -27,24 +34,39 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = {
+        IndexController.class,
         UserController.class,
         OrderController.class,
         VenueController.class,
@@ -52,13 +74,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         NewsController.class,
         AdminOrderController.class,
         AdminMessageController.class,
-        AdminNewsController.class
+        AdminNewsController.class,
+        AdminUserController.class,
+        AdminVenueController.class
 })
-@DisplayName("集成测试 — 业务流程")
 class IntegrationFlowTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+        private MvcResult performAndReturn(org.springframework.test.web.servlet.RequestBuilder requestBuilder) throws Exception {
+                return mockMvc.perform(requestBuilder).andReturn();
+        }
 
     @MockBean
     private UserService userService;
@@ -75,10 +102,7 @@ class IntegrationFlowTest {
     @MockBean
     private NewsService newsService;
 
-    // ==================== 登录流程 ====================
-
     @Test
-    @DisplayName("IT-LG-001 - login: 合法用户提交正确用户名与密码时写入 Session 并返回 /index")
     void testLoginSuccessShouldWriteUserSession() throws Exception {
         User user = new User();
         user.setUserID("u1001");
@@ -94,7 +118,6 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-LG-002 - login: 用户名存在但密码错误时返回 false")
     void testLoginWrongPasswordShouldReturnFalse() throws Exception {
         when(userService.checkLogin("u1001", "bad")).thenReturn(null);
 
@@ -105,10 +128,7 @@ class IntegrationFlowTest {
                 .andExpect(content().string("false"));
     }
 
-    // ==================== 订单流程 ====================
-
     @Test
-    @DisplayName("IT-OR-001 - order_manage: 未登录直接访问 /order_manage 时抛出 LoginException")
     void testOrderManageWithoutLoginShouldThrowLoginException() throws Exception {
         NestedServletException ex = assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/order_manage")));
@@ -116,7 +136,6 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-OR-002 - addOrder: 已登录用户提交合法订单参数时重定向并调用 submit")
     void testAddOrderWithLoginShouldRedirectAndInvokeSubmit() throws Exception {
         User loginUser = new User();
         loginUser.setUserID("u1001");
@@ -136,7 +155,6 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-OR-003 - delOrder: 未登录直接调用 /delOrder.do 删除订单（安全漏洞：未做登录校验）")
     void testDeleteOrderWithoutLoginShouldStillInvokeDelete_Vulnerability() throws Exception {
         mockMvc.perform(post("/delOrder.do")
                         .param("orderID", "1"))
@@ -146,10 +164,7 @@ class IntegrationFlowTest {
         verify(orderService, times(1)).delOrder(1);
     }
 
-    // ==================== 场馆流程 ====================
-
     @Test
-    @DisplayName("IT-VN-001 - venue_list: 请求第一页场馆数据时返回分页 JSON 且 content 非空")
     void testVenueListShouldReturnPagedData() throws Exception {
         Venue venue = new Venue();
         venue.setVenueID(1);
@@ -163,7 +178,6 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-VN-002 - toGymPage: 通过 venueID 访问场馆详情页时返回含场馆名的页面")
     void testVenueDetailShouldRenderVenuePage() throws Exception {
         Venue venue = new Venue();
         venue.setVenueID(1);
@@ -175,10 +189,149 @@ class IntegrationFlowTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("羽毛球馆A")));
     }
 
-    // ==================== 留言流程 ====================
+        @Test
+        void testIndexPageShouldRenderAggregatedData() throws Exception {
+                Venue venue = new Venue();
+                venue.setVenueID(1);
+                venue.setVenueName("羽毛球馆A");
+
+                News news = new News();
+                news.setNewsID(10);
+                news.setTitle("系统公告");
+
+                Message message = new Message();
+                message.setMessageID(7);
+                message.setUserID("u1001");
+
+                MessageVo messageVo = new MessageVo();
+                when(venueService.findAll(any())).thenReturn(new PageImpl<>(Collections.singletonList(venue)));
+                when(newsService.findAll(any())).thenReturn(new PageImpl<>(Collections.singletonList(news)));
+                when(messageService.findPassState(any())).thenReturn(new PageImpl<>(Collections.singletonList(message)));
+                when(messageVoService.returnVo(any())).thenReturn(Collections.singletonList(messageVo));
+
+                MvcResult result = performAndReturn(get("/index"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("羽毛球馆A"));
+                assertTrue(content.contains("系统公告"));
+        }
+
+        @Test
+        void testAdminIndexShouldRenderPage() throws Exception {
+                        MvcResult result = performAndReturn(get("/admin_index"));
+                        String content = result.getResponse().getContentAsString();
+                        assertEquals(200, result.getResponse().getStatus());
+                        assertTrue(content.contains("管理系统"));
+        }
+
+        @Test
+        void testAdminReservationManageShouldRenderPage() throws Exception {
+                Order order = new Order();
+                OrderVo orderVo = new OrderVo();
+                when(orderService.findAuditOrder()).thenReturn(Collections.singletonList(order));
+                when(orderVoService.returnVo(any())).thenReturn(Collections.singletonList(orderVo));
+                when(orderService.findNoAuditOrder(any())).thenReturn(new PageImpl<>(Collections.singletonList(order)));
+
+                MvcResult result = performAndReturn(get("/reservation_manage"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("reservation"));
+        }
+
+        @Test
+        void testAdminGetOrderListShouldReturnJson() throws Exception {
+                Order order = new Order();
+                OrderVo orderVo = new OrderVo();
+                when(orderService.findNoAuditOrder(any())).thenReturn(new PageImpl<>(Collections.singletonList(order)));
+                when(orderVoService.returnVo(any())).thenReturn(Collections.singletonList(orderVo));
+
+                mockMvc.perform(get("/admin/getOrderList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)));
+        }
+
+        @Test
+        void testAdminMessageManageShouldRenderPage() throws Exception {
+                Message message = new Message();
+                when(messageService.findWaitState(any())).thenReturn(new PageImpl<>(Collections.singletonList(message)));
+
+                MvcResult result = performAndReturn(get("/message_manage"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("message"));
+        }
+
+        @Test
+        void testAdminMessageListShouldReturnJson() throws Exception {
+                Message message = new Message();
+                MessageVo messageVo = new MessageVo();
+                when(messageService.findWaitState(any())).thenReturn(new PageImpl<>(Collections.singletonList(message)));
+                when(messageVoService.returnVo(any())).thenReturn(Collections.singletonList(messageVo));
+
+                mockMvc.perform(get("/messageList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)));
+        }
+
+        @Test
+        void testAdminNewsManageShouldRenderPage() throws Exception {
+                News news = new News();
+                when(newsService.findAll(any())).thenReturn(new PageImpl<>(Collections.singletonList(news)));
+
+                MvcResult result = performAndReturn(get("/news_manage"));
+                String content = result.getResponse().getContentAsString();
+                assertEquals(200, result.getResponse().getStatus());
+                assertTrue(content.contains("news"));
+        }
+
+        @Test
+        void testAdminUserListShouldReturnJson() throws Exception {
+                User user = new User();
+                user.setUserID("u1001");
+                when(userService.findByUserID(any(Pageable.class))).thenReturn(new PageImpl<>(Collections.singletonList(user)));
+
+                mockMvc.perform(get("/userList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)))
+                                .andExpect(jsonPath("$[0].userID").value("u1001"));
+        }
+
+        @Test
+        void testAdminCheckUserIdShouldReturnAvailability() throws Exception {
+                when(userService.countUserID("u1001")).thenReturn(0);
+
+                MvcResult result = performAndReturn(post("/checkUserID.do").param("userID", "u1001"));
+                assertEquals(200, result.getResponse().getStatus());
+                assertEquals("true", result.getResponse().getContentAsString());
+        }
+
+        @Test
+        void testAdminVenueListShouldReturnJson() throws Exception {
+                Venue v1 = new Venue();
+                v1.setVenueID(1);
+                v1.setVenueName("A馆");
+                Venue v2 = new Venue();
+                v2.setVenueID(2);
+                v2.setVenueName("B馆");
+                when(venueService.findAll(any())).thenReturn(new PageImpl<>(Arrays.asList(v1, v2)));
+
+                mockMvc.perform(get("/venueList.do").param("page", "1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(2)))
+                                .andExpect(jsonPath("$[0].venueID").value(1))
+                                .andExpect(jsonPath("$[1].venueID").value(2));
+        }
+
+        @Test
+        void testAdminCheckVenueNameShouldReturnAvailability() throws Exception {
+                when(venueService.countVenueName("羽毛球馆A")).thenReturn(0);
+
+                MvcResult result = performAndReturn(post("/checkVenueName.do").param("venueName", "羽毛球馆A"));
+                assertEquals(200, result.getResponse().getStatus());
+                assertEquals("true", result.getResponse().getContentAsString());
+        }
 
     @Test
-    @DisplayName("IT-MG-001 - sendMessage: 用户提交留言时重定向 /message_list 且默认状态为未审核")
     void testSendMessageShouldRedirectAndPersistDefaultState() throws Exception {
         mockMvc.perform(post("/sendMessage")
                         .param("userID", "u1001")
@@ -193,15 +346,6 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-MG-002 - user_message_list: 未登录访问 /message/findUserList 时抛出 LoginException")
-    void testFindUserMessageWithoutLoginShouldThrowLoginException() throws Exception {
-        NestedServletException ex = assertThrows(NestedServletException.class,
-                () -> mockMvc.perform(get("/message/findUserList").param("page", "1")));
-                assertTrue(ex.getCause() instanceof LoginException);
-    }
-
-    @Test
-    @DisplayName("IT-MG-003 - sendMessage: 未登录直接调用 /sendMessage 提交留言（安全漏洞：未做登录校验）")
     void testSendMessageWithoutLoginShouldStillPersist_Vulnerability() throws Exception {
         mockMvc.perform(post("/sendMessage")
                         .param("userID", "u9999")
@@ -216,7 +360,6 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-MG-004 - sendMessage: 登录用户在参数中提交他人 userID 时伪造身份被持久化（安全漏洞）")
     void testSendMessageWithForgedUserIdShouldPersistForgedIdentity_Vulnerability() throws Exception {
         User loginUser = new User();
         loginUser.setUserID("u1001");
@@ -237,7 +380,6 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-MG-005 - delMessage: 未登录直接调用 /delMessage.do 删除留言（安全漏洞：未做登录校验）")
     void testDeleteMessageWithoutLoginShouldStillInvokeDelete_Vulnerability() throws Exception {
         mockMvc.perform(post("/delMessage.do")
                         .param("messageID", "11"))
@@ -247,10 +389,16 @@ class IntegrationFlowTest {
         verify(messageService, times(1)).delById(11);
     }
 
-    // ==================== 黑盒自查占位（@Disabled） ====================
+    @Test
+    void testFindUserMessageWithoutLoginShouldThrowLoginException() throws Exception {
+        NestedServletException ex = assertThrows(NestedServletException.class,
+                () -> mockMvc.perform(get("/message/findUserList").param("page", "1")));
+                assertTrue(ex.getCause() instanceof LoginException);
+    }
 
     @Test
-    @DisplayName("IT-BB-01 - addOrder: hours<=0 时应抛出业务异常（已知服务层缺陷 UT-OR-005）")
+    @Disabled("未实现：submit 应拒绝 hours<=0")
+    @DisplayName("IT-BB-01 - addOrder: hours<=0 时应抛出业务异常")
     void testAddOrder_NonPositiveHours_ShouldBeRejected() {
         User loginUser = new User();
         loginUser.setUserID("u1001");
@@ -268,7 +416,8 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-BB-02 - passOrder: 非法前置状态时应抛出业务异常（已知服务层缺陷 UT-OR-018）")
+    @Disabled("未实现：confirmOrder 应拒绝已通过(STATE_WAIT/FINISH/REJECT)订单")
+    @DisplayName("IT-BB-02 - passOrder: 非法前置状态时应抛出业务异常")
     void testPassOrder_IllegalState_ShouldBeRejected() {
         assertThrows(Exception.class, () -> mockMvc.perform(post("/passOrder.do")
                 .param("orderID", "1")));
@@ -277,7 +426,8 @@ class IntegrationFlowTest {
     }
 
     @Test
-    @DisplayName("IT-BB-03 - rejectOrder: 非法前置状态时应抛出业务异常（已知服务层缺陷 UT-OR-020）")
+    @Disabled("未实现：rejectOrder 应拒绝已通过(STATE_WAIT/STATE_FINISH)订单")
+    @DisplayName("IT-BB-03 - rejectOrder: 非法前置状态时应抛出业务异常")
     void testRejectOrder_IllegalState_ShouldBeRejected() {
         assertThrows(Exception.class, () -> mockMvc.perform(post("/rejectOrder.do")
                 .param("orderID", "1")));
