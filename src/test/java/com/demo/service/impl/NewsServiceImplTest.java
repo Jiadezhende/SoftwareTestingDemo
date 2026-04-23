@@ -17,16 +17,12 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("NewsService 单元测试")
 class NewsServiceImplTest {
 
     @Mock
@@ -35,7 +31,10 @@ class NewsServiceImplTest {
     @InjectMocks
     private NewsServiceImpl newsService;
 
+    // ==================== findAll ====================
+
     @Test
+    @DisplayName("UT-NW-001 - findAll: 传入分页参数查询新闻列表时返回分页结果")
     void testFindAll() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<News> page = new PageImpl<>(Collections.singletonList(buildNews(1, "馆内通知")));
@@ -48,6 +47,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-006 - findAll: 传入第一页且 DAO 返回空分页时原样返回空分页对象")
     void testFindAllBoundaryWithEmptyPage() {
         Pageable pageable = PageRequest.of(0, 1);
         Page<News> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
@@ -61,6 +61,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-007 - findAll: DAO 分页查询抛出异常时异常向上透传")
     void testFindAllException() {
         Pageable pageable = PageRequest.of(1, 10);
         RuntimeException exception = new RuntimeException("分页查询失败");
@@ -73,6 +74,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-016 - findAll: pageable=null 时调用 DAO 并异常向上透传")
     void testFindAllExceptionWithNullPageable() {
         IllegalArgumentException exception = new IllegalArgumentException("pageable 不能为空");
         when(newsDao.findAll((Pageable) null)).thenThrow(exception);
@@ -83,7 +85,10 @@ class NewsServiceImplTest {
         verify(newsDao).findAll((Pageable) null);
     }
 
+    // ==================== findById ====================
+
     @Test
+    @DisplayName("UT-NW-002 - findById: 查询存在的新闻 ID 时返回对应 News 对象")
     void testFindById() {
         News news = buildNews(2, "比赛公告");
         when(newsDao.getOne(2)).thenReturn(news);
@@ -95,6 +100,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-008 - findById: 查询 newsID=0 的新闻时委托 DAO 查询并返回对象")
     void testFindByIdBoundaryWithZeroId() {
         News news = buildNews(0, "默认公告");
         when(newsDao.getOne(0)).thenReturn(news);
@@ -106,6 +112,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-009 - findById: DAO 查询单条新闻抛出异常时异常向上透传")
     void testFindByIdException() {
         RuntimeException exception = new RuntimeException("查询公告失败");
         when(newsDao.getOne(99)).thenThrow(exception);
@@ -116,7 +123,10 @@ class NewsServiceImplTest {
         verify(newsDao).getOne(99);
     }
 
+    // ==================== create ====================
+
     @Test
+    @DisplayName("UT-NW-003 - create: 新增合法新闻对象时返回持久化后对象的 newsID")
     void testCreate() {
         News news = buildNews(0, "新增公告");
         News savedNews = buildNews(3, "新增公告");
@@ -129,6 +139,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-010 - create: 新增新闻后持久化对象 newsID=0 时返回 0")
     void testCreateBoundaryWithZeroId() {
         News news = buildNews(0, "边界公告");
         News savedNews = buildNews(0, "边界公告");
@@ -141,6 +152,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-011 - create: DAO 保存新闻抛出异常时异常向上透传")
     void testCreateException() {
         News news = buildNews(0, "异常公告");
         RuntimeException exception = new RuntimeException("保存公告失败");
@@ -153,6 +165,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-017 - create: DAO save 返回 null 时触发 NullPointerException")
     void testCreateBoundaryWithNullSavedEntity() {
         News news = buildNews(0, "持久化返回空对象");
         when(newsDao.save(news)).thenReturn(null);
@@ -164,7 +177,7 @@ class NewsServiceImplTest {
 
     @Test
     @Disabled("未实现：title 为空的新闻应被拒绝")
-    @DisplayName("17 - create: title 为空时应抛出异常")
+    @DisplayName("UT-NW-019 - create: title 为空时应抛出异常")
     void testCreate_EmptyTitle_ShouldBeRejected() {
         News news = buildNews(0, "");
 
@@ -174,7 +187,7 @@ class NewsServiceImplTest {
 
     @Test
     @Disabled("未实现：content 为空的新闻应被拒绝")
-    @DisplayName("18 - create: content 为空时应抛出异常")
+    @DisplayName("UT-NW-020 - create: content 为空时应抛出异常")
     void testCreate_EmptyContent_ShouldBeRejected() {
         News news = buildNews(0, "内容为空公告");
         news.setContent("");
@@ -183,7 +196,10 @@ class NewsServiceImplTest {
         verify(newsDao, never()).save(any(News.class));
     }
 
+    // ==================== delById ====================
+
     @Test
+    @DisplayName("UT-NW-004 - delById: 删除指定新闻 ID 时委托 DAO 删除对应记录")
     void testDelById() {
         newsService.delById(4);
 
@@ -191,6 +207,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-012 - delById: 删除 newsID=0 的新闻时委托 DAO 删除")
     void testDelByIdBoundaryWithZeroId() {
         newsService.delById(0);
 
@@ -198,6 +215,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-013 - delById: DAO 删除新闻抛出异常时异常向上透传")
     void testDelByIdException() {
         RuntimeException exception = new RuntimeException("删除公告失败");
         doThrow(exception).when(newsDao).deleteById(9);
@@ -208,7 +226,10 @@ class NewsServiceImplTest {
         verify(newsDao).deleteById(9);
     }
 
+    // ==================== update ====================
+
     @Test
+    @DisplayName("UT-NW-005 - update: 更新已有新闻对象时委托 DAO 保存")
     void testUpdate() {
         News news = buildNews(5, "公告更新");
 
@@ -218,6 +239,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-014 - update: 更新 newsID=0 的新闻对象时委托 DAO 保存")
     void testUpdateBoundaryWithZeroId() {
         News news = buildNews(0, "边界更新");
 
@@ -227,6 +249,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-015 - update: DAO 更新新闻抛出异常时异常向上透传")
     void testUpdateException() {
         News news = buildNews(7, "异常更新");
         RuntimeException exception = new RuntimeException("更新公告失败");
@@ -239,6 +262,7 @@ class NewsServiceImplTest {
     }
 
     @Test
+    @DisplayName("UT-NW-018 - update: news=null 时调用 DAO 并异常向上透传")
     void testUpdateBoundaryWithNullNews() {
         IllegalArgumentException exception = new IllegalArgumentException("news 不能为空");
         when(newsDao.save(null)).thenThrow(exception);

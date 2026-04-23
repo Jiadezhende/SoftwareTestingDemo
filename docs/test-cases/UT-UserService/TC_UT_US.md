@@ -8,7 +8,7 @@
 | 负责成员  | 印伟辰                     |
 | 用例编号段 | `UT-US-001 ~ UT-US-030` |
 | 创建日期  | 2026-04-18              |
-| 最后更新  | 2026-04-21              |
+| 最后更新  | 2026-04-23              |
 
 ### 变更记录
 
@@ -16,13 +16,16 @@
 |------|------|--------|------|
 | v1.0 | 2026-04-18 | | 初稿创建，按等价类划分补全全部用例 |
 | v1.1 | 2026-04-21 | | 补充黑盒分析发现的待实现需求用例 UT-US-028~029（@Disabled） |
+| v1.2 | 2026-04-23 | | 测试类迁移至 `com.demo.service.impl.UserServiceImplTest`，同步更新测试函数路径 |
+| v1.3 | 2026-04-23 | | UT-US-015/016 从 @Disabled 改为 enabled：checkLogin 已实现，null 入参防御为缺陷（非未实现功能）；断言从 Exception 改为 LoginException |
 
 ---
 
 ## findByUserID(String)
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:findByUserID(String userID)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testFindByUserID_EC1_found()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindByUserID_EC1_found()、testFindByUserID_EC2_notFound()、testFindByUserID_EC3_emptyString()、testFindByUserID_EC4_null()`
+**设计技术**：`等价类划分`
 
 ### 等价类划分
 
@@ -47,7 +50,8 @@
 ## findById(int)
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:findById(int id)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testFindById_EC5_found()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindById_EC5_found()、testFindById_EC6_notFound()、testFindById_EC7_zero()、testFindById_EC8_negative()`
+**设计技术**：`等价类划分 + 边界值分析`
 
 ### 等价类划分
 
@@ -72,7 +76,8 @@
 ## findByUserID(Pageable)
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:findByUserID(Pageable pageable)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testFindByUserID_pageable_EC9_hasUsers()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindByUserID_pageable_EC9_hasUsers()、testFindByUserID_pageable_EC10_empty()`
+**设计技术**：`等价类划分`
 
 ### 等价类划分
 
@@ -93,7 +98,8 @@
 ## checkLogin
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:checkLogin(String userID, String password)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testCheckLogin_EC11_success()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCheckLogin_EC11_success()、testCheckLogin_EC12_wrongPassword()、testCheckLogin_EC13_userNotFound()、testCheckLogin_EC14_emptyPassword()、testCheckLogin_EC15_nullUserID()、testCheckLogin_EC16_nullPassword()`
+**设计技术**：`等价类划分`
 
 ### 等价类划分
 
@@ -114,15 +120,16 @@
 | UT-US-012 | EC12 | 密码错误时返回 null | `"user001"`, `"wrong"` | 返回 null | 通过 | 正确 |
 | UT-US-013 | EC13 | 账号不存在时返回 null | `"nobody"`, `"123456"` | 返回 null | 通过 | 正确 |
 | UT-US-014 | EC14 | 密码为空字符串时返回 null | `"user001"`, `""` | 返回 null | 通过 | 正确 |
-| UT-US-015 | EC15 | userID 为 null 时返回 null | `null`, `"123456"` | 返回 null | 通过 | 正确 |
-| UT-US-016 | EC16 | password 为 null 时返回 null | `"user001"`, `null` | 返回 null | 通过 | 正确 |
+| UT-US-015 | EC15 | userID 为 null 时服务层应抛出 LoginException，不应调用 DAO | `null`, `"123456"` | 抛出 `LoginException`，且不调用 `userDao.findByUserIDAndPassword` | 失败（缺陷暴露） | 错误 |
+| UT-US-016 | EC16 | password 为 null 时服务层应抛出 LoginException，不应调用 DAO | `"user001"`, `null` | 抛出 `LoginException`，且不调用 `userDao.findByUserIDAndPassword` | 失败（缺陷暴露） | 错误 |
 
 ---
 
 ## create
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:create(User user)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testCreate_EC17_multipleUsers()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCreate_EC17_multipleUsers()、testCreate_EC18_firstUser()、testCreate_EC19_nullUser()、testCreate_EC28_emptyPassword()、testCreate_EC29_nullUserID()、testCreate_EC30_duplicateUserID()`
+**设计技术**：`等价类划分`
 
 ### 等价类划分
 
@@ -161,7 +168,8 @@
 ## delByID
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:delByID(int id)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testDelByID_EC20_success()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testDelByID_EC20_success()、testDelByID_EC21_notFound()、testDelByID_EC22_negativeId()`
+**设计技术**：`等价类划分`
 
 ### 等价类划分
 
@@ -184,7 +192,8 @@
 ## updateUser
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:updateUser(User user)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testUpdateUser_EC23_valid()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testUpdateUser_EC23_valid()、testUpdateUser_EC24_nullUser()`
+**设计技术**：`等价类划分`
 
 ### 等价类划分
 
@@ -205,7 +214,8 @@
 ## countUserID
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:countUserID(String userID)`
-**测试函数**：`src.test.java.com.demo.service.UserServiceTest:testCountUserID_EC25_exists()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCountUserID_EC25_exists()、testCountUserID_EC26_notExists()、testCountUserID_EC27_null()`
+**设计技术**：`等价类划分`
 
 ### 等价类划分
 
