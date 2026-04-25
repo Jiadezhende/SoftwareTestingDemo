@@ -38,14 +38,16 @@
 | BUG-025 | 丘俊 | 2026-04-21 | 单元测试 | UT-VN-031 | 创建场馆时传入已有 `venueName`，服务层未调用 `countVenueName` 拦截重名 | 低 | 新建 | 前端有校验但后端无防护；对应 @Disabled 待实现 |
 | BUG-026 | 印伟辰 | 2026-04-23 | 单元测试 | UT-US-015 | `checkLogin(null, pwd)` 未早期拒绝，直接调用 DAO，未抛 `LoginException` | 中 | 新建 | checkLogin 已实现，属防御缺口非未实现功能 |
 | BUG-027 | 印伟辰 | 2026-04-23 | 单元测试 | UT-US-016 | `checkLogin(uid, null)` 未早期拒绝，直接调用 DAO，未抛 `LoginException` | 中 | 新建 | 同 BUG-026 |
-| BUG-028 | 成员E | 2026-04-23 | 集成测试 | IT-BB-01 | `addOrder` 传入 `hours=0`，集成层未拦截，服务层同样未校验 | 中 | 新建 | 根因同 BUG-002（UT-OR-014, UT-OR-018） |
-| BUG-029 | 成员E | 2026-04-23 | 集成测试 | IT-BB-02 | `passOrder` 对非法前置状态订单未拒绝，状态机流转不受控 | 高 | 新建 | 根因同 BUG-005（UT-OR-032） |
-| BUG-030 | 成员E | 2026-04-23 | 集成测试 | IT-BB-03 | `rejectOrder` 对非法前置状态订单未拒绝，状态机流转不受控 | 高 | 新建 | 根因同 BUG-007（UT-OR-040） |
+| BUG-028 | 成员E | 2026-04-23 | 集成测试 | IT-INT-024 | `addOrder` 传入 `hours=0`，集成层未拦截，服务层同样未校验 | 中 | 新建 | 根因同 BUG-002（UT-OR-014, UT-OR-018） |
+| BUG-029 | 成员E | 2026-04-23 | 集成测试 | IT-INT-025 | `passOrder` 对非法前置状态订单未拒绝，状态机流转不受控 | 高 | 新建 | 根因同 BUG-005（UT-OR-032） |
+| BUG-030 | 成员E | 2026-04-23 | 集成测试 | IT-INT-026 | `rejectOrder` 对非法前置状态订单未拒绝，状态机流转不受控 | 高 | 新建 | 根因同 BUG-007（UT-OR-040） |
 | BUG-031 | 俞楚凡 | 2026-04-16 | 单元测试 | UT-MG-008 | create 方法未校验 content 是否为 null，允许创建无内容的留言 | 中 | 新建 | |
 | BUG-032 | 俞楚凡 | 2026-04-16 | 单元测试 | UT-MG-009 | create 方法未校验 content 是否为空字符串，允许创建空内容的留言 | 中 | 新建 | |
 | BUG-033 | 俞楚凡 | 2026-04-16 | 单元测试 | UT-MG-016 | update 方法未校验留言是否存在，不存在的留言被 JPA save() 当作新增处理 | 高 | 新建 | |
 | BUG-034 | 俞楚凡 | 2026-04-16 | 单元测试 | UT-MG-036 | create 方法未校验 state 合法性，state=0（非法值）可正常保存 | 中 | 新建 | |
 | BUG-035 | 俞楚凡 | 2026-04-16 | 单元测试 | UT-MG-039 | create 方法未校验 state 合法性，state=4（非法值）可正常保存 | 中 | 新建 | |
+| BUG-036 | 丘俊 | 2026-04-25 | 单元测试 | UT-VN-026 | `VenueServiceImpl.create` 未对 `venueDao.save()` 返回 null 做防护，直接透传 `NullPointerException` | 中 | 新建 | 系统稳定性缺陷；DAO save 返回 null 属异常情况，服务层应捕获并包装 |
+| BUG-037 | 丘俊 | 2026-04-25 | 单元测试 | UT-NW-017 | `NewsServiceImpl.create` 未对 `newsDao.save()` 返回 null 做防护，直接透传 `NullPointerException` | 中 | 新建 | 系统稳定性缺陷；根因同 BUG-036 |
 
 ---
 

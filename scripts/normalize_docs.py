@@ -19,7 +19,7 @@ ROOT = Path(__file__).parent.parent
 
 # ── 规则常量 ──────────────────────────────────────────────
 
-VALID_CONCLUSIONS = {"正确", "错误", "待测"}
+VALID_CONCLUSIONS = {"正确", "错误", "待测", "跳过"}
 
 # 各文件允许的编号前缀
 PREFIX_RULES = {

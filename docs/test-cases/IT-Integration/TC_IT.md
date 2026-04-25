@@ -19,13 +19,14 @@
 | v1.2 | 2026-04-13 | 成员E | 执行漏洞探测型集成测试并记录缺陷 |
 | v1.3 | 2026-04-21 | 成员E | 基于黑盒自查手册补充 @Disabled 占位用例（需求缺口追踪） |
 | v1.4 | 2026-04-23 | | IT-BB-01/02/03 从 @Disabled 改为 enabled：对应服务层缺陷（UT-OR-005/018/020）已 enabled，集成层同一缺陷不应掩盖 |
+| v1.5 | 2026-04-25 | 成员E | IT-BB-01~06 统一重编为 IT-INT-024~029；IT-INT-024~026 保持 enabled 并 failing（缺陷暴露）；IT-INT-027~029 保持 @Disabled |
 
 ---
 
 ## 登录流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.UserController.java:login(String userID, String password, HttpServletRequest)`
-**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testLoginSuccessShouldWriteUserSession()、testLoginWrongPasswordShouldReturnFalse()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testLogin_success()、testLogin_wrongPassword()`
 **设计技术**：`场景法 + 等价类划分`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -38,7 +39,7 @@
 ## 订单流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.OrderController.java:order_manage(Model, HttpServletRequest), addOrder(String, String, String, int, HttpServletRequest, HttpServletResponse)`
-**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testOrderManageWithoutLoginShouldThrowLoginException()、testAddOrderWithLoginShouldRedirectAndInvokeSubmit()、testDeleteOrderWithoutLoginShouldStillInvokeDelete_Vulnerability()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testOrderManage_noLogin()、testAddOrder_success()、testDelOrder_noLogin_vulnerability()`
 **设计技术**：`场景法`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -52,7 +53,7 @@
 ## 场馆流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.VenueController.java:venue_list(int), toGymPage(Model, int)`
-**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testVenueListShouldReturnPagedData()、testVenueDetailShouldRenderVenuePage()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testVenueList_success()、testVenueDetail_success()`
 **设计技术**：`场景法`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -65,7 +66,7 @@
 ## 留言流程
 
 **测试对象**：`src.main.java.com.demo.controller.user.MessageController.java:sendMessage(String, String, HttpServletResponse), user_message_list(int, HttpServletRequest)`
-**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testSendMessageShouldRedirectAndPersistDefaultState()、testFindUserMessageWithoutLoginShouldThrowLoginException()、testSendMessageWithoutLoginShouldStillPersist_Vulnerability()、testSendMessageWithForgedUserIdShouldPersistForgedIdentity_Vulnerability()、testDeleteMessageWithoutLoginShouldStillInvokeDelete_Vulnerability()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testSendMessage_success()、testFindUserMessage_noLogin()、testSendMessage_noLogin_vulnerability()、testSendMessage_forgedUserId_vulnerability()、testDelMessage_noLogin_vulnerability()`
 **设计技术**：`场景法`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -80,16 +81,16 @@
 
 ## 黑盒自查（缺陷暴露 + @Disabled 占位）
 
-> 说明：IT-BB-01/02/03 已移除 `@Disabled`，当前运行并 failing，暴露已知服务层缺陷。IT-BB-04/05 因 message 分支未合并暂不处理；IT-BB-06 等待服务层校验实现后启用，保持 `@Disabled`。
+> 说明：IT-INT-024~026（原 IT-BB-01~03）当前运行并 failing，暴露已知服务层缺陷（BUG-028/029/030）。IT-INT-027~029（原 IT-BB-04~06）保持 `@Disabled`，待对应功能修复后启用。
 
-**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testAddOrder_NonPositiveHours_ShouldBeRejected()、testPassOrder_IllegalState_ShouldBeRejected()、testRejectOrder_IllegalState_ShouldBeRejected()、testPassOrRejectMessage_IllegalState_ShouldBeRejected()、testSendMessage_EmptyContent_ShouldBeRejected()、testAddNews_EmptyTitleOrContent_ShouldBeRejected()`
+**测试函数**：`src.test.java.com.demo.integration.IntegrationFlowTest:testAddOrder_nonPositiveHours()、testPassOrder_illegalState()、testRejectOrder_illegalState()、testPassOrRejectMessage_illegalState()、testSendMessage_emptyContent()、testAddNews_emptyTitleOrContent()`
 **设计技术**：`黑盒等价类划分`
 
 | 功能点列表 | 用例编号 | 用例描述 | 预期结果 | 当前状态 | 结论 |
 |-----------|---------|---------|---------|---------|------|
-| 订单提交参数校验 | IT-BB-01 | `/addOrder.do` 传入 `hours=0` | 抛出业务异常，且不应调用 `orderService.submit` | 失败（缺陷暴露，对应 UT-OR-005） | 错误 |
-| 订单状态机非法流转 | IT-BB-02 | `/passOrder.do` 对非法前置状态订单执行通过 | 抛出业务异常，且不应调用 `orderService.confirmOrder` | 失败（缺陷暴露，对应 UT-OR-018） | 错误 |
-| 订单状态机非法流转 | IT-BB-03 | `/rejectOrder.do` 对非法前置状态订单执行驳回 | 抛出业务异常，且不应调用 `orderService.rejectOrder` | 失败（缺陷暴露，对应 UT-OR-020） | 错误 |
-| 留言状态机非法流转 | IT-BB-04 | `/passMessage.do` / `/rejectMessage.do` 对已处理留言再次流转 | 抛出业务异常，且不应调用对应 service 方法 | 跳过（@Disabled，message 分支未合并） | 待测 |
-| 留言输入校验 | IT-BB-05 | `/sendMessage` 传入空 `content` | 抛出业务异常，且不应调用 `messageService.create` | 跳过（@Disabled，message 分支未合并） | 待测 |
-| 新闻输入校验 | IT-BB-06 | `/addNews.do` 传入空 `title` 或空 `content` | 抛出业务异常，且不应调用 `newsService.create` | 跳过（@Disabled，等待 UT-NW-019/020 服务层实现后启用） | 待测 |
+| 订单提交参数校验 | IT-INT-024 | `/addOrder.do` 传入 `hours=0` | 抛出业务异常，且不应调用 `orderService.submit` | 失败（缺陷暴露，BUG-028） | 错误 |
+| 订单状态机非法流转 | IT-INT-025 | `/passOrder.do` 对非法前置状态订单执行通过 | 抛出业务异常，且不应调用 `orderService.confirmOrder` | 失败（缺陷暴露，BUG-029） | 错误 |
+| 订单状态机非法流转 | IT-INT-026 | `/rejectOrder.do` 对非法前置状态订单执行驳回 | 抛出业务异常，且不应调用 `orderService.rejectOrder` | 失败（缺陷暴露，BUG-030） | 错误 |
+| 留言状态机非法流转 | IT-INT-027 | `/passMessage.do` / `/rejectMessage.do` 对已处理留言再次流转 | 抛出业务异常，且不应调用对应 service 方法 | 跳过（@Disabled，message 分支未合并） | 待测 |
+| 留言输入校验 | IT-INT-028 | `/sendMessage` 传入空 `content` | 抛出业务异常，且不应调用 `messageService.create` | 跳过（@Disabled，message 分支未合并） | 待测 |
+| 新闻输入校验 | IT-INT-029 | `/addNews.do` 传入空 `title` 或空 `content` | 抛出业务异常，且不应调用 `newsService.create` | 跳过（@Disabled，等待 UT-NW-019/020 服务层实现后启用） | 待测 |

@@ -39,10 +39,10 @@
 ## findById
 
 **测试对象**：`OrderServiceImpl.findById(int orderID)`
-**测试函数**：`OrderServiceImplTest:testFindByIdDelegatesToDao`
-**测试函数**：`OrderServiceImplTest:testFindByIdReturnsNullWhenOrderDoesNotExist`
-**测试函数**：`OrderServiceImplTest:testFindByIdWithZeroIdShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testFindByIdPropagatesDaoException`
+**测试函数**：`OrderServiceImplTest:testFindById_delegatesToDao`
+**测试函数**：`OrderServiceImplTest:testFindById_notFound`
+**测试函数**：`OrderServiceImplTest:testFindById_zeroId`
+**测试函数**：`OrderServiceImplTest:testFindById_daoException`
 **设计技术**：等价类划分
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -57,10 +57,10 @@
 ## findDateOrder
 
 **测试对象**：`OrderServiceImpl.findDateOrder(int venueID, LocalDateTime startTime, LocalDateTime startTime2)`
-**测试函数**：`OrderServiceImplTest:testFindDateOrderDelegatesToDao`
-**测试函数**：`OrderServiceImplTest:testFindDateOrderReturnsEmptyListWhenNoOrderMatches`
-**测试函数**：`OrderServiceImplTest:testFindDateOrderWithInvalidTimeRangeShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testFindDateOrderPropagatesDaoException`
+**测试函数**：`OrderServiceImplTest:testFindDateOrder_delegatesToDao`
+**测试函数**：`OrderServiceImplTest:testFindDateOrder_noMatch`
+**测试函数**：`OrderServiceImplTest:testFindDateOrder_invalidTimeRange`
+**测试函数**：`OrderServiceImplTest:testFindDateOrder_daoException`
 **设计技术**：等价类划分
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -75,10 +75,10 @@
 ## findUserOrder
 
 **测试对象**：`OrderServiceImpl.findUserOrder(String userID, Pageable pageable)`
-**测试函数**：`OrderServiceImplTest:testFindUserOrderDelegatesToDao`
-**测试函数**：`OrderServiceImplTest:testFindUserOrderReturnsEmptyPageForUnknownUser`
-**测试函数**：`OrderServiceImplTest:testFindUserOrderWithNullUserIdShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testFindUserOrderPropagatesDaoException`
+**测试函数**：`OrderServiceImplTest:testFindUserOrder_delegatesToDao`
+**测试函数**：`OrderServiceImplTest:testFindUserOrder_unknownUser`
+**测试函数**：`OrderServiceImplTest:testFindUserOrder_nullUserId`
+**测试函数**：`OrderServiceImplTest:testFindUserOrder_daoException`
 **设计技术**：等价类划分
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -93,13 +93,13 @@
 ## submit
 
 **测试对象**：`OrderServiceImpl.submit(String venueName, LocalDateTime startTime, int hours, String userID)`
-**测试函数**：`OrderServiceImplTest:testSubmitCreatesOrderWithCalculatedTotal`
-**测试函数**：`OrderServiceImplTest:testSubmitWithZeroHoursShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testSubmitWithNegativeHoursShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testSubmitWithUnknownVenueShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testSubmitWithNullStartTimeShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testSubmitWithNullUserIdShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testSubmitPropagatesVenueDaoExceptionAndDoesNotSave`
+**测试函数**：`OrderServiceImplTest:testSubmit_success`
+**测试函数**：`OrderServiceImplTest:testSubmit_zeroHours`
+**测试函数**：`OrderServiceImplTest:testSubmit_negativeHours`
+**测试函数**：`OrderServiceImplTest:testSubmit_unknownVenue`
+**测试函数**：`OrderServiceImplTest:testSubmit_nullStartTime`
+**测试函数**：`OrderServiceImplTest:testSubmit_nullUserId`
+**测试函数**：`OrderServiceImplTest:testSubmit_venueDaoException`
 **设计技术**：等价类划分 + 边界值分析
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -117,12 +117,12 @@
 ## updateOrder
 
 **测试对象**：`OrderServiceImpl.updateOrder(int orderID, String venueName, LocalDateTime startTime, int hours, String userID)`
-**测试函数**：`OrderServiceImplTest:testUpdateOrderUpdatesExistingOrderUsingVenuePrice`
-**测试函数**：`OrderServiceImplTest:testUpdateOrderWithMissingOrderShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testUpdateOrderWithZeroHoursShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testUpdateOrderWithNegativeHoursShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testUpdateOrderWithUnknownVenueShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testUpdateOrderPropagatesDaoExceptionAndDoesNotSave`
+**测试函数**：`OrderServiceImplTest:testUpdateOrder_success`
+**测试函数**：`OrderServiceImplTest:testUpdateOrder_missingOrder`
+**测试函数**：`OrderServiceImplTest:testUpdateOrder_zeroHours`
+**测试函数**：`OrderServiceImplTest:testUpdateOrder_negativeHours`
+**测试函数**：`OrderServiceImplTest:testUpdateOrder_unknownVenue`
+**测试函数**：`OrderServiceImplTest:testUpdateOrder_daoException`
 **设计技术**：等价类划分 + 边界值分析
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -139,10 +139,10 @@
 ## delOrder
 
 **测试对象**：`OrderServiceImpl.delOrder(int orderID)`
-**测试函数**：`OrderServiceImplTest:testDeleteOrderDelegatesToDao`
-**测试函数**：`OrderServiceImplTest:testDeleteOrderDelegatesToDaoWhenOrderDoesNotExist`
-**测试函数**：`OrderServiceImplTest:testDeleteOrderWithZeroIdShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testDeleteOrderPropagatesDaoException`
+**测试函数**：`OrderServiceImplTest:testDelOrder_delegatesToDao`
+**测试函数**：`OrderServiceImplTest:testDelOrder_notFound`
+**测试函数**：`OrderServiceImplTest:testDelOrder_zeroId`
+**测试函数**：`OrderServiceImplTest:testDelOrder_daoException`
 **设计技术**：等价类划分
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -157,10 +157,10 @@
 ## confirmOrder
 
 **测试对象**：`OrderServiceImpl.confirmOrder(int orderID)`
-**测试函数**：`OrderServiceImplTest:testConfirmOrderUpdatesStateWhenOrderExists`
-**测试函数**：`OrderServiceImplTest:testConfirmOrderThrowsWhenOrderMissing`
-**测试函数**：`OrderServiceImplTest:testConfirmOrderWithWaitStateShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testConfirmOrderPropagatesDaoExceptionAndDoesNotUpdateState`
+**测试函数**：`OrderServiceImplTest:testConfirmOrder_success`
+**测试函数**：`OrderServiceImplTest:testConfirmOrder_notFound`
+**测试函数**：`OrderServiceImplTest:testConfirmOrder_illegalState`
+**测试函数**：`OrderServiceImplTest:testConfirmOrder_daoException`
 **设计技术**：语句覆盖 + 判定覆盖
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -175,10 +175,10 @@
 ## finishOrder
 
 **测试对象**：`OrderServiceImpl.finishOrder(int orderID)`
-**测试函数**：`OrderServiceImplTest:testFinishOrderUpdatesStateWhenOrderExists`
-**测试函数**：`OrderServiceImplTest:testFinishOrderThrowsWhenOrderMissing`
-**测试函数**：`OrderServiceImplTest:testFinishOrderWithNoAuditStateShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testFinishOrderPropagatesDaoExceptionAndDoesNotUpdateState`
+**测试函数**：`OrderServiceImplTest:testFinishOrder_success`
+**测试函数**：`OrderServiceImplTest:testFinishOrder_notFound`
+**测试函数**：`OrderServiceImplTest:testFinishOrder_illegalState`
+**测试函数**：`OrderServiceImplTest:testFinishOrder_daoException`
 **设计技术**：语句覆盖 + 判定覆盖
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -193,10 +193,10 @@
 ## rejectOrder
 
 **测试对象**：`OrderServiceImpl.rejectOrder(int orderID)`
-**测试函数**：`OrderServiceImplTest:testRejectOrderUpdatesStateWhenOrderExists`
-**测试函数**：`OrderServiceImplTest:testRejectOrderThrowsWhenOrderMissing`
-**测试函数**：`OrderServiceImplTest:testRejectOrderWithWaitStateShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testRejectOrderPropagatesDaoExceptionAndDoesNotUpdateState`
+**测试函数**：`OrderServiceImplTest:testRejectOrder_success`
+**测试函数**：`OrderServiceImplTest:testRejectOrder_notFound`
+**测试函数**：`OrderServiceImplTest:testRejectOrder_illegalState`
+**测试函数**：`OrderServiceImplTest:testRejectOrder_daoException`
 **设计技术**：语句覆盖 + 判定覆盖
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -211,10 +211,10 @@
 ## findNoAuditOrder
 
 **测试对象**：`OrderServiceImpl.findNoAuditOrder(Pageable pageable)`
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrderDelegatesToDao`
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrderReturnsEmptyPageWhenNoPendingOrderExists`
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrderWithNullPageableShouldBeRejected`
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrderPropagatesDaoException`
+**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_delegatesToDao`
+**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_empty`
+**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_nullPageable`
+**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_daoException`
 **设计技术**：等价类划分
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -229,9 +229,9 @@
 ## findAuditOrder
 
 **测试对象**：`OrderServiceImpl.findAuditOrder()`
-**测试函数**：`OrderServiceImplTest:testFindAuditOrderDelegatesToDao`
-**测试函数**：`OrderServiceImplTest:testFindAuditOrderReturnsEmptyListWhenNoAuditedOrderExists`
-**测试函数**：`OrderServiceImplTest:testFindAuditOrderPropagatesDaoException`
+**测试函数**：`OrderServiceImplTest:testFindAuditOrder_delegatesToDao`
+**测试函数**：`OrderServiceImplTest:testFindAuditOrder_empty`
+**测试函数**：`OrderServiceImplTest:testFindAuditOrder_daoException`
 **设计技术**：等价类划分
 
 

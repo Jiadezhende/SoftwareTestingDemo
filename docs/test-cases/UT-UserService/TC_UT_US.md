@@ -24,7 +24,7 @@
 ## findByUserID(String)
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:findByUserID(String userID)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindByUserID_EC1_found()、testFindByUserID_EC2_notFound()、testFindByUserID_EC3_emptyString()、testFindByUserID_EC4_null()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindByUserID_found()、testFindByUserID_notFound()、testFindByUserID_emptyString()、testFindByUserID_null()`
 **设计技术**：`等价类划分`
 
 ### 等价类划分
@@ -50,7 +50,7 @@
 ## findById(int)
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:findById(int id)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindById_EC5_found()、testFindById_EC6_notFound()、testFindById_EC7_zero()、testFindById_EC8_negative()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindById_found()、testFindById_notFound()、testFindById_zero()、testFindById_negative()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 ### 等价类划分
@@ -76,7 +76,7 @@
 ## findByUserID(Pageable)
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:findByUserID(Pageable pageable)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindByUserID_pageable_EC9_hasUsers()、testFindByUserID_pageable_EC10_empty()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testFindByUserID_pageable_hasUsers()、testFindByUserID_pageable_empty()`
 **设计技术**：`等价类划分`
 
 ### 等价类划分
@@ -98,7 +98,7 @@
 ## checkLogin
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:checkLogin(String userID, String password)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCheckLogin_EC11_success()、testCheckLogin_EC12_wrongPassword()、testCheckLogin_EC13_userNotFound()、testCheckLogin_EC14_emptyPassword()、testCheckLogin_EC15_nullUserID()、testCheckLogin_EC16_nullPassword()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCheckLogin_success()、testCheckLogin_wrongPassword()、testCheckLogin_userNotFound()、testCheckLogin_emptyPassword()、testCheckLogin_nullUserID()、testCheckLogin_nullPassword()`
 **设计技术**：`等价类划分`
 
 ### 等价类划分
@@ -128,7 +128,7 @@
 ## create
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:create(User user)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCreate_EC17_multipleUsers()、testCreate_EC18_firstUser()、testCreate_EC19_nullUser()、testCreate_EC28_emptyPassword()、testCreate_EC29_nullUserID()、testCreate_EC30_duplicateUserID()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCreate_multipleUsers()、testCreate_firstUser()、testCreate_nullUser()、testCreate_emptyPassword()、testCreate_nullUserID()、testCreate_duplicateUserID()`
 **设计技术**：`等价类划分`
 
 ### 等价类划分
@@ -168,7 +168,7 @@
 ## delByID
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:delByID(int id)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testDelByID_EC20_success()、testDelByID_EC21_notFound()、testDelByID_EC22_negativeId()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testDelByID_success()、testDelByID_notFound()、testDelByID_negativeId()`
 **设计技术**：`等价类划分`
 
 ### 等价类划分
@@ -192,7 +192,7 @@
 ## updateUser
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:updateUser(User user)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testUpdateUser_EC23_valid()、testUpdateUser_EC24_nullUser()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testUpdateUser_valid()、testUpdateUser_nullUser()`
 **设计技术**：`等价类划分`
 
 ### 等价类划分
@@ -214,7 +214,7 @@
 ## countUserID
 
 **测试对象**：`src.main.java.com.demo.service.impl.UserServiceImpl.java:countUserID(String userID)`
-**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCountUserID_EC25_exists()、testCountUserID_EC26_notExists()、testCountUserID_EC27_null()`
+**测试函数**：`src.test.java.com.demo.service.impl.UserServiceImplTest:testCountUserID_exists()、testCountUserID_notExists()、testCountUserID_null()`
 **设计技术**：`等价类划分`
 
 ### 等价类划分

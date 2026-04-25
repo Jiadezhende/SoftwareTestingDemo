@@ -23,7 +23,7 @@
 ## findByVenueID
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findByVenueID(int id)`
-**测试函数**：`testFindByVenueID()`、`testFindByVenueIDBoundaryWithZeroId()`、`testFindByVenueIDException()`
+**测试函数**：`testFindByVenueID_found()`、`testFindByVenueID_zeroId()`、`testFindByVenueID_daoException()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -35,7 +35,7 @@
 ## findByVenueName
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findByVenueName(String venueName)`
-**测试函数**：`testFindByVenueName()`、`testFindByVenueNameBoundaryWithEmptyName()`、`testFindByVenueNameException()`
+**测试函数**：`testFindByVenueName_found()`、`testFindByVenueName_emptyName()`、`testFindByVenueName_daoException()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -47,7 +47,7 @@
 ## findAll(Pageable)
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findAll(Pageable pageable)`
-**测试函数**：`testFindAllByPageable()`、`testFindAllByPageableBoundaryWithEmptyPage()`、`testFindAllByPageableException()`、`testFindAllByPageableExceptionWithNullPageable()`
+**测试函数**：`testFindAll_pageable()`、`testFindAll_pageable_emptyPage()`、`testFindAll_pageable_daoException()`、`testFindAll_pageable_nullPageable()`
 **设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
@@ -85,7 +85,7 @@
 ## findAll
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:findAll()`
-**测试函数**：`testFindAll()`、`testFindAllBoundaryWithEmptyList()`、`testFindAllException()`
+**测试函数**：`testFindAll_noParam()`、`testFindAll_noParam_emptyList()`、`testFindAll_noParam_daoException()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -97,7 +97,7 @@
 ## create
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:create(Venue venue)`
-**测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`、`testCreate_NegativePrice_ShouldBeRejected()`、`testCreate_EmptyVenueName_ShouldBeRejected()`、`testCreate_DuplicateVenueName_ShouldBeRejected()`
+**测试函数**：`testCreate_success()`、`testCreate_zeroId()`、`testCreate_daoException()`、`testCreate_nullSavedEntity()`、`testCreate_negativePrice()`、`testCreate_emptyVenueName()`、`testCreate_duplicateVenueName()`
 **设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
@@ -140,14 +140,14 @@
 | UT-VN-017 | 边界值：新增场馆后持久化对象 `venueID=0` | 调用 `venueDao.save(venue)`，返回持久化后对象的 `venueID=0` | 方法最终返回 `0`，证明 service 未额外加工返回值 | 正确 |
 | UT-VN-018 | 异常路径：DAO 保存场馆抛出异常 | 异常向上透传，不返回默认值 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-VN-026 | 边界值：DAO `save` 返回 `null` | 调用 `venueDao.save(venue)` 后获取 `venueID` 触发空指针异常 | 捕获到 `NullPointerException` | 正确 |
-| UT-VN-029 | 缺陷占位：`price < 0` 的场馆不应被创建 | 应抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_NegativePrice_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
-| UT-VN-030 | 缺陷占位：`venueName` 为空的场馆不应被创建 | 应抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_EmptyVenueName_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
-| UT-VN-031 | 缺陷占位：重复 `venueName` 的场馆不应被创建 | 应先校验 `countVenueName(venueName)`，若已存在则抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_DuplicateVenueName_ShouldBeRejected()`，当前实现未调用重名校验 | 待测 |
+| UT-VN-029 | 缺陷占位：`price < 0` 的场馆不应被创建 | 应抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_negativePrice()`，当前实现未校验该场景 | 待测 |
+| UT-VN-030 | 缺陷占位：`venueName` 为空的场馆不应被创建 | 应抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_emptyVenueName()`，当前实现未校验该场景 | 待测 |
+| UT-VN-031 | 缺陷占位：重复 `venueName` 的场馆不应被创建 | 应先校验 `countVenueName(venueName)`，若已存在则抛出业务异常，且不调用 `venueDao.save(venue)` | 已补充 `@Disabled` 占位测试 `testCreate_duplicateVenueName()`，当前实现未调用重名校验 | 待测 |
 
 ## update
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:update(Venue venue)`
-**测试函数**：`testUpdate()`、`testUpdateBoundaryWithZeroId()`、`testUpdateException()`、`testUpdateBoundaryWithNullVenue()`
+**测试函数**：`testUpdate_success()`、`testUpdate_zeroId()`、`testUpdate_daoException()`、`testUpdate_nullVenue()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 ### 用例设计（等价类/边界值/决策表）
@@ -184,7 +184,7 @@
 ## delById
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:delById(int id)`
-**测试函数**：`testDelById()`、`testDelByIdBoundaryWithZeroId()`、`testDelByIdException()`
+**测试函数**：`testDelById_success()`、`testDelById_zeroId()`、`testDelById_daoException()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -196,7 +196,7 @@
 ## countVenueName
 
 **测试对象**：`src.main.java.com.demo.service.impl.VenueServiceImpl.java:countVenueName(String venueName)`
-**测试函数**：`testCountVenueName()`、`testCountVenueNameBoundaryWithEmptyName()`、`testCountVenueNameException()`、`testCountVenueNameExceptionWithNullName()`
+**测试函数**：`testCountVenueName_found()`、`testCountVenueName_emptyName()`、`testCountVenueName_daoException()`、`testCountVenueName_nullName()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 ### 用例设计（等价类/边界值/决策表）

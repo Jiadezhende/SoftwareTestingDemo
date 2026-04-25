@@ -23,7 +23,7 @@
 ## findAll
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:findAll(Pageable pageable)`
-**测试函数**：`testFindAll()`、`testFindAllBoundaryWithEmptyPage()`、`testFindAllException()`、`testFindAllExceptionWithNullPageable()`
+**测试函数**：`testFindAll_success()`、`testFindAll_emptyPage()`、`testFindAll_daoException()`、`testFindAll_nullPageable()`
 **设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
@@ -61,7 +61,7 @@
 ## findById
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:findById(int newsID)`
-**测试函数**：`testFindById()`、`testFindByIdBoundaryWithZeroId()`、`testFindByIdException()`
+**测试函数**：`testFindById_success()`、`testFindById_zeroId()`、`testFindById_daoException()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -73,7 +73,7 @@
 ## create
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:create(News news)`
-**测试函数**：`testCreate()`、`testCreateBoundaryWithZeroId()`、`testCreateException()`、`testCreateBoundaryWithNullSavedEntity()`、`testCreate_EmptyTitle_ShouldBeRejected()`、`testCreate_EmptyContent_ShouldBeRejected()`
+**测试函数**：`testCreate_success()`、`testCreate_zeroId()`、`testCreate_daoException()`、`testCreate_nullSavedEntity()`、`testCreate_emptyTitle()`、`testCreate_emptyContent()`
 **设计技术**：`等价类划分 + 边界值分析 + 决策表`
 
 ### 用例设计（等价类/边界值/决策表）
@@ -113,13 +113,13 @@
 | UT-NW-010 | 边界值：新增新闻后持久化对象 `newsID=0` | 调用 `newsDao.save(news)`，返回持久化后对象的 `newsID=0` | 方法最终返回 `0`，证明 service 未额外加工返回值 | 正确 |
 | UT-NW-011 | 异常路径：DAO 保存新闻抛出异常 | 异常向上透传，不返回默认值 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-NW-017 | 边界值：DAO `save` 返回 `null` | 调用 `newsDao.save(news)` 后获取 `newsID` 触发空指针异常 | 捕获到 `NullPointerException` | 正确 |
-| UT-NW-019 | 缺陷占位：`title` 为空的新闻不应被创建 | 应抛出业务异常，且不调用 `newsDao.save(news)` | 已补充 `@Disabled` 占位测试 `testCreate_EmptyTitle_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
-| UT-NW-020 | 缺陷占位：`content` 为空的新闻不应被创建 | 应抛出业务异常，且不调用 `newsDao.save(news)` | 已补充 `@Disabled` 占位测试 `testCreate_EmptyContent_ShouldBeRejected()`，当前实现未校验该场景 | 待测 |
+| UT-NW-019 | 缺陷占位：`title` 为空的新闻不应被创建 | 应抛出业务异常，且不调用 `newsDao.save(news)` | 已补充 `@Disabled` 占位测试 `testCreate_emptyTitle()`，当前实现未校验该场景 | 待测 |
+| UT-NW-020 | 缺陷占位：`content` 为空的新闻不应被创建 | 应抛出业务异常，且不调用 `newsDao.save(news)` | 已补充 `@Disabled` 占位测试 `testCreate_emptyContent()`，当前实现未校验该场景 | 待测 |
 
 ## delById
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:delById(int newsID)`
-**测试函数**：`testDelById()`、`testDelByIdBoundaryWithZeroId()`、`testDelByIdException()`
+**测试函数**：`testDelById_success()`、`testDelById_zeroId()`、`testDelById_daoException()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
@@ -131,7 +131,7 @@
 ## update
 
 **测试对象**：`src.main.java.com.demo.service.impl.NewsServiceImpl.java:update(News news)`
-**测试函数**：`testUpdate()`、`testUpdateBoundaryWithZeroId()`、`testUpdateException()`、`testUpdateBoundaryWithNullNews()`
+**测试函数**：`testUpdate_success()`、`testUpdate_zeroId()`、`testUpdate_daoException()`、`testUpdate_nullNews()`
 **设计技术**：`等价类划分 + 边界值分析`
 
 ### 用例设计（等价类/边界值/决策表）

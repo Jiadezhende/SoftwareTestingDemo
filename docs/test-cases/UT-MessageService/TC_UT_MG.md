@@ -17,6 +17,7 @@
 | v1.0 | 2026-04-13 | 俞楚凡 | 初稿创建，基于等价类划分构造测试用例 |
 | v1.1 | 2026-04-15 | 俞楚凡 | 补充边界值分析测试用例 UT-MG-028~042 |
 | v1.2 | 2026-04-16 | 俞楚凡 | 补充白盒测试覆盖分析 |
+| v1.3 | 2026-04-25 | 俞楚凡 | UT-MG-008/009/016/036/039 结论更新为"跳过"，对应 @Disabled 代码变更（BUG-031~035） |
 
 ---
 
@@ -53,8 +54,8 @@
 | UT-MG-005 | 传入所有字段正常的 Message 对象 | 返回新增留言的 messageID（大于 0） | 返回 messageID=2 | 正确 |
 | UT-MG-006 | 传入 null | 抛出异常 | 抛出 IllegalArgumentException | 正确 |
 | UT-MG-007 | 传入 userID 为 null 的 Message | 抛出异常（数据库 NOT NULL 约束） | 抛出 DataIntegrityViolationException | 正确 |
-| UT-MG-008 | 传入 content 为 null 的 Message | 拒绝创建，抛出异常或返回错误提示 | 正常创建成功，返回 messageID=10（代码未校验 content） | 错误 |
-| UT-MG-009 | 传入 content 为空字符串的 Message | 拒绝创建，抛出异常或返回错误提示 | 正常创建成功，返回 messageID=11（代码未校验 content） | 错误 |
+| UT-MG-008 | 传入 content 为 null 的 Message | 拒绝创建，抛出异常或返回错误提示 | 跳过（@Disabled，BUG-031） | 跳过 |
+| UT-MG-009 | 传入 content 为空字符串的 Message | 拒绝创建，抛出异常或返回错误提示 | 跳过（@Disabled，BUG-032） | 跳过 |
 
 ---
 
@@ -88,7 +89,7 @@
 |---------|---------|---------|---------|------|
 | UT-MG-014 | 传入已存在的留言，修改 content 为新内容 | 更新成功，content 变为新值 | 更新成功，无异常 | 正确 |
 | UT-MG-015 | 传入 null | 抛出异常 | 抛出 IllegalArgumentException | 正确 |
-| UT-MG-016 | 传入数据库中不存在的留言（messageID=9999） | 应拒绝更新，抛出异常或返回错误提示 | save() 正常执行，不存在的留言被当作新增处理（代码未校验） | 错误 |
+| UT-MG-016 | 传入数据库中不存在的留言（messageID=9999） | 应拒绝更新，抛出异常或返回错误提示 | 跳过（@Disabled，BUG-033） | 跳过 |
 
 ---
 
@@ -164,10 +165,10 @@
 
 | 用例编号 | 用例描述 | 预期结果 | 测试结果 | 结论 |
 |---------|---------|---------|---------|------|
-| UT-MG-036 | create 传入 state=0（下界-1，非法状态） | 应拒绝创建，抛出异常或返回错误 | 正常创建成功，返回 messageID=33（代码未校验 state 合法性） | 错误 |
+| UT-MG-036 | create 传入 state=0（下界-1，非法状态） | 应拒绝创建，抛出异常或返回错误 | 跳过（@Disabled，BUG-034） | 跳过 |
 | UT-MG-037 | create 传入 state=1（下界，待审核） | 正常创建 | 正常创建，返回 messageID=34 | 正确 |
 | UT-MG-038 | create 传入 state=3（上界，驳回） | 正常创建 | 正常创建，返回 messageID=35 | 正确 |
-| UT-MG-039 | create 传入 state=4（上界+1，非法状态） | 应拒绝创建，抛出异常或返回错误 | 正常创建成功，返回 messageID=36（代码未校验 state 合法性） | 错误 |
+| UT-MG-039 | create 传入 state=4（上界+1，非法状态） | 应拒绝创建，抛出异常或返回错误 | 跳过（@Disabled，BUG-035） | 跳过 |
 
 ---
 
