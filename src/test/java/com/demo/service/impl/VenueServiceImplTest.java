@@ -4,6 +4,7 @@ import com.demo.dao.VenueDao;
 import com.demo.entity.Venue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 @DisplayName("VenueService 单元测试")
 class VenueServiceImplTest {
@@ -36,7 +38,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-001 - findByVenueID: 传入存在的场馆 ID 时返回对应 Venue 对象")
-    void testFindByVenueID() {
+    void testFindByVenueID_found() {
         Venue venue = buildVenue(1, "羽毛球馆", 80);
         when(venueDao.getOne(1)).thenReturn(venue);
 
@@ -48,7 +50,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-009 - findByVenueID: 传入 id=0 查询场馆时委托 DAO 查询并返回对象")
-    void testFindByVenueIDBoundaryWithZeroId() {
+    void testFindByVenueID_zeroId() {
         Venue venue = buildVenue(0, "默认场馆", 0);
         when(venueDao.getOne(0)).thenReturn(venue);
 
@@ -60,7 +62,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-010 - findByVenueID: DAO 按 ID 查询场馆抛出异常时异常向上透传")
-    void testFindByVenueIDException() {
+    void testFindByVenueID_daoException() {
         RuntimeException exception = new RuntimeException("查询场馆失败");
         when(venueDao.getOne(99)).thenThrow(exception);
 
@@ -74,7 +76,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-002 - findByVenueName: 查询存在的场馆名时返回对应 Venue 对象")
-    void testFindByVenueName() {
+    void testFindByVenueName_found() {
         Venue venue = buildVenue(2, "篮球馆", 120);
         when(venueDao.findByVenueName("篮球馆")).thenReturn(venue);
 
@@ -86,7 +88,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-011 - findByVenueName: 传入空字符串场馆名时委托 DAO 查询并返回结果")
-    void testFindByVenueNameBoundaryWithEmptyName() {
+    void testFindByVenueName_emptyName() {
         Venue venue = buildVenue(0, "", 0);
         when(venueDao.findByVenueName("")).thenReturn(venue);
 
@@ -98,7 +100,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-012 - findByVenueName: DAO 按名称查询场馆抛出异常时异常向上透传")
-    void testFindByVenueNameException() {
+    void testFindByVenueName_daoException() {
         RuntimeException exception = new RuntimeException("按名称查询场馆失败");
         when(venueDao.findByVenueName("异常场馆")).thenThrow(exception);
 
@@ -112,7 +114,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-003 - findAll(Pageable): 传入分页参数查询场馆列表时返回分页结果")
-    void testFindAllByPageable() {
+    void testFindAll_pageable() {
         Pageable pageable = PageRequest.of(0, 5);
         Page<Venue> page = new PageImpl<>(Collections.singletonList(buildVenue(3, "游泳馆", 150)));
         when(venueDao.findAll(pageable)).thenReturn(page);
@@ -125,7 +127,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-013 - findAll(Pageable): 传入第一页且 DAO 返回空分页时原样返回空分页对象")
-    void testFindAllByPageableBoundaryWithEmptyPage() {
+    void testFindAll_pageable_emptyPage() {
         Pageable pageable = PageRequest.of(0, 1);
         Page<Venue> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
         when(venueDao.findAll(pageable)).thenReturn(emptyPage);
@@ -139,7 +141,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-014 - findAll(Pageable): DAO 分页查询场馆抛出异常时异常向上透传")
-    void testFindAllByPageableException() {
+    void testFindAll_pageable_daoException() {
         Pageable pageable = PageRequest.of(1, 5);
         RuntimeException exception = new RuntimeException("分页查询场馆失败");
         when(venueDao.findAll(pageable)).thenThrow(exception);
@@ -152,7 +154,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-025 - findAll(Pageable): pageable=null 时调用 DAO 并异常向上透传")
-    void testFindAllByPageableExceptionWithNullPageable() {
+    void testFindAll_pageable_nullPageable() {
         IllegalArgumentException exception = new IllegalArgumentException("pageable 不能为空");
         when(venueDao.findAll((Pageable) null)).thenThrow(exception);
 
@@ -166,7 +168,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-004 - findAll: 查询全部场馆时返回场馆列表")
-    void testFindAll() {
+    void testFindAll_noParam() {
         List<Venue> venues = Arrays.asList(
                 buildVenue(4, "网球馆", 100),
                 buildVenue(5, "乒乓球馆", 60)
@@ -181,7 +183,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-015 - findAll: DAO 返回空场馆列表时原样返回空列表")
-    void testFindAllBoundaryWithEmptyList() {
+    void testFindAll_noParam_emptyList() {
         List<Venue> venues = Collections.emptyList();
         when(venueDao.findAll()).thenReturn(venues);
 
@@ -194,7 +196,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-016 - findAll: DAO 查询全部场馆抛出异常时异常向上透传")
-    void testFindAllException() {
+    void testFindAll_noParam_daoException() {
         RuntimeException exception = new RuntimeException("查询全部场馆失败");
         when(venueDao.findAll()).thenThrow(exception);
 
@@ -208,7 +210,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-005 - create: 新增合法场馆对象时返回持久化后对象的 venueID")
-    void testCreate() {
+    void testCreate_success() {
         Venue venue = buildVenue(0, "体操馆", 200);
         Venue savedVenue = buildVenue(6, "体操馆", 200);
         when(venueDao.save(venue)).thenReturn(savedVenue);
@@ -221,7 +223,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-017 - create: 新增场馆后持久化对象 venueID=0 时返回 0")
-    void testCreateBoundaryWithZeroId() {
+    void testCreate_zeroId() {
         Venue venue = buildVenue(0, "边界体操馆", 0);
         Venue savedVenue = buildVenue(0, "边界体操馆", 0);
         when(venueDao.save(venue)).thenReturn(savedVenue);
@@ -234,7 +236,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-018 - create: DAO 保存场馆抛出异常时异常向上透传")
-    void testCreateException() {
+    void testCreate_daoException() {
         Venue venue = buildVenue(0, "异常体操馆", 200);
         RuntimeException exception = new RuntimeException("保存场馆失败");
         when(venueDao.save(venue)).thenThrow(exception);
@@ -246,8 +248,8 @@ class VenueServiceImplTest {
     }
 
     @Test
-    @DisplayName("UT-VN-026 - create: DAO save 返回 null 时触发 NullPointerException")
-    void testCreateBoundaryWithNullSavedEntity() {
+    @DisplayName("UT-VN-026 - create: [BUG-036] DAO save 返回 null 时服务层无 null 检查，直接透传 NullPointerException")
+    void testCreate_nullSavedEntity() {
         Venue venue = buildVenue(0, "持久化返回空对象", 200);
         when(venueDao.save(venue)).thenReturn(null);
 
@@ -257,9 +259,9 @@ class VenueServiceImplTest {
     }
 
     @Test
-    @Disabled("未实现：price < 0 的场馆应被拒绝")
+    @Disabled("BUG-023: 负 price 可被持久化，待服务层输入校验实现后启用")
     @DisplayName("UT-VN-029 - create: price < 0 时应抛出异常")
-    void testCreate_NegativePrice_ShouldBeRejected() {
+    void testCreate_negativePrice() {
         Venue venue = buildVenue(0, "异常价格场馆", -1);
 
         assertThrows(Exception.class, () -> venueService.create(venue));
@@ -267,9 +269,9 @@ class VenueServiceImplTest {
     }
 
     @Test
-    @Disabled("未实现：venueName 为空的场馆应被拒绝")
+    @Disabled("BUG-024: 空 venueName 可被持久化，待服务层输入校验实现后启用")
     @DisplayName("UT-VN-030 - create: venueName 为空时应抛出异常")
-    void testCreate_EmptyVenueName_ShouldBeRejected() {
+    void testCreate_emptyVenueName() {
         Venue venue = buildVenue(0, "", 80);
 
         assertThrows(Exception.class, () -> venueService.create(venue));
@@ -277,9 +279,9 @@ class VenueServiceImplTest {
     }
 
     @Test
-    @Disabled("未实现：重复 venueName 应被拒绝")
+    @Disabled("BUG-025: 重复 venueName 未被拦截，待服务层唯一性校验实现后启用")
     @DisplayName("UT-VN-031 - create: venueName 重复时应抛出异常")
-    void testCreate_DuplicateVenueName_ShouldBeRejected() {
+    void testCreate_duplicateVenueName() {
         Venue venue = buildVenue(0, "羽毛球馆", 80);
         when(venueDao.countByVenueName("羽毛球馆")).thenReturn(1);
 
@@ -292,7 +294,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-006 - update: 更新已有场馆对象时委托 DAO 保存")
-    void testUpdate() {
+    void testUpdate_success() {
         Venue venue = buildVenue(7, "健身房", 90);
 
         venueService.update(venue);
@@ -302,7 +304,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-019 - update: 更新 venueID=0 的场馆对象时委托 DAO 保存")
-    void testUpdateBoundaryWithZeroId() {
+    void testUpdate_zeroId() {
         Venue venue = buildVenue(0, "边界健身房", 0);
 
         venueService.update(venue);
@@ -312,7 +314,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-020 - update: DAO 更新场馆抛出异常时异常向上透传")
-    void testUpdateException() {
+    void testUpdate_daoException() {
         Venue venue = buildVenue(7, "异常健身房", 90);
         RuntimeException exception = new RuntimeException("更新场馆失败");
         when(venueDao.save(venue)).thenThrow(exception);
@@ -325,7 +327,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-027 - update: venue=null 时调用 DAO 并异常向上透传")
-    void testUpdateBoundaryWithNullVenue() {
+    void testUpdate_nullVenue() {
         IllegalArgumentException exception = new IllegalArgumentException("venue 不能为空");
         when(venueDao.save(null)).thenThrow(exception);
 
@@ -339,7 +341,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-007 - delById: 删除指定场馆 ID 时委托 DAO 删除对应记录")
-    void testDelById() {
+    void testDelById_success() {
         venueService.delById(8);
 
         verify(venueDao).deleteById(8);
@@ -347,7 +349,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-021 - delById: 删除 id=0 的场馆时委托 DAO 删除")
-    void testDelByIdBoundaryWithZeroId() {
+    void testDelById_zeroId() {
         venueService.delById(0);
 
         verify(venueDao).deleteById(0);
@@ -355,7 +357,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-022 - delById: DAO 删除场馆抛出异常时异常向上透传")
-    void testDelByIdException() {
+    void testDelById_daoException() {
         RuntimeException exception = new RuntimeException("删除场馆失败");
         doThrow(exception).when(venueDao).deleteById(9);
 
@@ -369,7 +371,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-008 - countVenueName: 统计指定场馆名的数量时返回 DAO 结果")
-    void testCountVenueName() {
+    void testCountVenueName_found() {
         when(venueDao.countByVenueName("综合馆")).thenReturn(2);
 
         int result = venueService.countVenueName("综合馆");
@@ -380,7 +382,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-023 - countVenueName: 统计空字符串场馆名数量时返回 DAO 结果")
-    void testCountVenueNameBoundaryWithEmptyName() {
+    void testCountVenueName_emptyName() {
         when(venueDao.countByVenueName("")).thenReturn(0);
 
         int result = venueService.countVenueName("");
@@ -391,7 +393,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-024 - countVenueName: DAO 统计场馆名数量抛出异常时异常向上透传")
-    void testCountVenueNameException() {
+    void testCountVenueName_daoException() {
         RuntimeException exception = new RuntimeException("统计场馆名称失败");
         when(venueDao.countByVenueName("异常场馆")).thenThrow(exception);
 
@@ -403,7 +405,7 @@ class VenueServiceImplTest {
 
     @Test
     @DisplayName("UT-VN-028 - countVenueName: venueName=null 时调用 DAO 并异常向上透传")
-    void testCountVenueNameExceptionWithNullName() {
+    void testCountVenueName_nullName() {
         IllegalArgumentException exception = new IllegalArgumentException("venueName 不能为空");
         when(venueDao.countByVenueName(null)).thenThrow(exception);
 

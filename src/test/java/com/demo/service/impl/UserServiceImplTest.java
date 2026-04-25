@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService 单元测试")
 class UserServiceImplTest {
@@ -50,7 +51,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-001 - findByUserID: userID 存在时返回对应 User")
-    void testFindByUserID_EC1_found() {
+    void testFindByUserID_found() {
         when(userDao.findByUserID("user001")).thenReturn(mockUser);
 
         User result = userService.findByUserID("user001");
@@ -61,7 +62,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-002 - findByUserID: userID 不存在时返回 null")
-    void testFindByUserID_EC2_notFound() {
+    void testFindByUserID_notFound() {
         when(userDao.findByUserID("ghost")).thenReturn(null);
 
         User result = userService.findByUserID("ghost");
@@ -71,7 +72,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-003 - findByUserID: userID 为空字符串时返回 null")
-    void testFindByUserID_EC3_emptyString() {
+    void testFindByUserID_emptyString() {
         when(userDao.findByUserID("")).thenReturn(null);
 
         User result = userService.findByUserID("");
@@ -81,7 +82,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-004 - findByUserID: userID 为 null 时返回 null")
-    void testFindByUserID_EC4_null() {
+    void testFindByUserID_null() {
         when(userDao.findByUserID((String) null)).thenReturn(null);
 
         User result = userService.findByUserID((String) null);
@@ -93,7 +94,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-005 - findById: id 存在时返回对应 User")
-    void testFindById_EC5_found() {
+    void testFindById_found() {
         when(userDao.findById(1)).thenReturn(mockUser);
 
         User result = userService.findById(1);
@@ -104,7 +105,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-006 - findById: id 不存在时返回 null")
-    void testFindById_EC6_notFound() {
+    void testFindById_notFound() {
         when(userDao.findById(999)).thenReturn(null);
 
         User result = userService.findById(999);
@@ -114,7 +115,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-007 - findById: id = 0（边界值）时返回 null")
-    void testFindById_EC7_zero() {
+    void testFindById_zero() {
         when(userDao.findById(0)).thenReturn(null);
 
         User result = userService.findById(0);
@@ -124,7 +125,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-008 - findById: id 为负数时返回 null")
-    void testFindById_EC8_negative() {
+    void testFindById_negative() {
         when(userDao.findById(-1)).thenReturn(null);
 
         User result = userService.findById(-1);
@@ -136,7 +137,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-009 - findByUserID(Pageable): 存在普通用户时返回分页结果")
-    void testFindByUserID_pageable_EC9_hasUsers() {
+    void testFindByUserID_pageable_hasUsers() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> mockPage = new PageImpl<>(Collections.singletonList(mockUser), pageable, 1);
         when(userDao.findAllByIsadmin(0, pageable)).thenReturn(mockPage);
@@ -150,7 +151,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-010 - findByUserID(Pageable): 无普通用户时返回空分页")
-    void testFindByUserID_pageable_EC10_empty() {
+    void testFindByUserID_pageable_empty() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
         when(userDao.findAllByIsadmin(0, pageable)).thenReturn(emptyPage);
@@ -166,7 +167,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-011 - checkLogin: 账号密码均正确时返回 User")
-    void testCheckLogin_EC11_success() {
+    void testCheckLogin_success() {
         when(userDao.findByUserIDAndPassword("user001", "123456")).thenReturn(mockUser);
 
         User result = userService.checkLogin("user001", "123456");
@@ -177,7 +178,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-012 - checkLogin: 密码错误时返回 null")
-    void testCheckLogin_EC12_wrongPassword() {
+    void testCheckLogin_wrongPassword() {
         when(userDao.findByUserIDAndPassword("user001", "wrong")).thenReturn(null);
 
         User result = userService.checkLogin("user001", "wrong");
@@ -187,7 +188,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-013 - checkLogin: 账号不存在时返回 null")
-    void testCheckLogin_EC13_userNotFound() {
+    void testCheckLogin_userNotFound() {
         when(userDao.findByUserIDAndPassword("nobody", "123456")).thenReturn(null);
 
         User result = userService.checkLogin("nobody", "123456");
@@ -197,7 +198,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-014 - checkLogin: 密码为空字符串时返回 null")
-    void testCheckLogin_EC14_emptyPassword() {
+    void testCheckLogin_emptyPassword() {
         when(userDao.findByUserIDAndPassword("user001", "")).thenReturn(null);
 
         User result = userService.checkLogin("user001", "");
@@ -207,14 +208,14 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-015 - checkLogin: userID 为 null 时服务层应抛出 LoginException 且不调用 DAO")
-    void testCheckLogin_EC15_nullUserID() {
+    void testCheckLogin_nullUserID() {
         assertThrows(LoginException.class, () -> userService.checkLogin(null, "123456"));
         verify(userDao, never()).findByUserIDAndPassword(any(), any());
     }
 
     @Test
     @DisplayName("UT-US-016 - checkLogin: password 为 null 时服务层应抛出 LoginException 且不调用 DAO")
-    void testCheckLogin_EC16_nullPassword() {
+    void testCheckLogin_nullPassword() {
         assertThrows(LoginException.class, () -> userService.checkLogin("user001", null));
         verify(userDao, never()).findByUserIDAndPassword(any(), any());
     }
@@ -223,7 +224,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-017 - create: 表中已有数据时返回正确总数")
-    void testCreate_EC17_multipleUsers() {
+    void testCreate_multipleUsers() {
         List<User> allUsers = Arrays.asList(mockUser, new User());
         when(userDao.findAll()).thenReturn(allUsers);
 
@@ -235,7 +236,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-018 - create: 首个用户时返回总数 1（边界值）")
-    void testCreate_EC18_firstUser() {
+    void testCreate_firstUser() {
         when(userDao.findAll()).thenReturn(Collections.singletonList(mockUser));
 
         int result = userService.create(mockUser);
@@ -246,7 +247,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-019 - create: user 为 null 时抛出 IllegalArgumentException")
-    void testCreate_EC19_nullUser() {
+    void testCreate_nullUser() {
         doThrow(new IllegalArgumentException("Entity must not be null"))
                 .when(userDao).save(null);
 
@@ -257,7 +258,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-020 - delByID: id 存在时正常删除")
-    void testDelByID_EC20_success() {
+    void testDelByID_success() {
         doNothing().when(userDao).deleteById(1);
 
         userService.delByID(1);
@@ -267,7 +268,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-021 - delByID: id 不存在时抛出 EmptyResultDataAccessException")
-    void testDelByID_EC21_notFound() {
+    void testDelByID_notFound() {
         doThrow(new EmptyResultDataAccessException(1))
                 .when(userDao).deleteById(999);
 
@@ -276,7 +277,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-022 - delByID: id 为负数时抛出 EmptyResultDataAccessException")
-    void testDelByID_EC22_negativeId() {
+    void testDelByID_negativeId() {
         doThrow(new EmptyResultDataAccessException(1))
                 .when(userDao).deleteById(-1);
 
@@ -287,7 +288,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-023 - updateUser: 有效 User 时调用 save")
-    void testUpdateUser_EC23_valid() {
+    void testUpdateUser_valid() {
         mockUser.setUserName("李四");
 
         userService.updateUser(mockUser);
@@ -297,7 +298,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-024 - updateUser: user 为 null 时抛出 IllegalArgumentException")
-    void testUpdateUser_EC24_nullUser() {
+    void testUpdateUser_nullUser() {
         doThrow(new IllegalArgumentException("Entity must not be null"))
                 .when(userDao).save(null);
 
@@ -308,7 +309,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-025 - countUserID: userID 已存在时返回 1")
-    void testCountUserID_EC25_exists() {
+    void testCountUserID_exists() {
         when(userDao.countByUserID("user001")).thenReturn(1);
 
         int result = userService.countUserID("user001");
@@ -318,7 +319,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-026 - countUserID: userID 不存在时返回 0")
-    void testCountUserID_EC26_notExists() {
+    void testCountUserID_notExists() {
         when(userDao.countByUserID("newUser")).thenReturn(0);
 
         int result = userService.countUserID("newUser");
@@ -328,7 +329,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("UT-US-027 - countUserID: userID 为 null 时返回 0")
-    void testCountUserID_EC27_null() {
+    void testCountUserID_null() {
         when(userDao.countByUserID(null)).thenReturn(0);
 
         int result = userService.countUserID(null);
@@ -341,7 +342,7 @@ class UserServiceImplTest {
     @Test
     @Disabled("未实现：create 应拒绝 password 为空的 User")
     @DisplayName("UT-US-028 - create: password 为空时应抛出异常")
-    void testCreate_EC28_emptyPassword() {
+    void testCreate_emptyPassword() {
         User user = new User();
         user.setUserID("u002");
         user.setUserName("李四");
@@ -354,7 +355,7 @@ class UserServiceImplTest {
     @Test
     @Disabled("未实现：create 应拒绝 userID 为 null 的 User")
     @DisplayName("UT-US-029 - create: userID 字段为 null 时应抛出异常")
-    void testCreate_EC29_nullUserID() {
+    void testCreate_nullUserID() {
         User user = new User();
         user.setUserID(null);
         user.setUserName("李四");
@@ -367,7 +368,7 @@ class UserServiceImplTest {
     @Test
     @Disabled("未实现：create 应调用 countUserID 检查唯一性，而非依赖数据库约束兜底")
     @DisplayName("UT-US-030 - create: userID 重复时服务层应拒绝并不调用 save")
-    void testCreate_EC30_duplicateUserID() {
+    void testCreate_duplicateUserID() {
         when(userDao.countByUserID("user001")).thenReturn(1);
 
         assertThrows(Exception.class, () -> userService.create(mockUser));

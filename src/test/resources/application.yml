@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/demo_db_test?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_To_NULL&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: mysql
+    show-sql: true
