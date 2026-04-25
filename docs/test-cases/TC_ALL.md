@@ -887,7 +887,7 @@
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:confirmMessage(int messageID)`
 
-**测试函数**：`MessageServiceImplTest:testConfirmMessage_existingId、testConfirmMessage_nonExistingId、testConfirmMessage_messageIdZero、testConfirmMessage_messageIdOne、testConfirmMessage_messageIdNegative`
+**测试函数**：`MessageServiceImplTest:testConfirmMessage_existingId()、testConfirmMessage_nonExistingId()、testConfirmMessage_messageIdZero()、testConfirmMessage_messageIdOne()、testConfirmMessage_messageIdNegative()`
 
 **设计技术**：`等价类划分 + 边界值分析`
 
@@ -917,7 +917,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:rejectMessage(int messageID)`
 
-**测试函数**：`MessageServiceImplTest:testRejectMessage_existingId、testRejectMessage_nonExistingId`
+**测试函数**：`MessageServiceImplTest:testRejectMessage_existingId()、testRejectMessage_nonExistingId()`
 
 **设计技术**：`等价类划分`
 
@@ -932,7 +932,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:create(Message message)`
 
-**测试函数**：`MessageServiceImplTest:testCreate_validMessage、testCreate_nullMessage、testCreate_nullUserID、testCreate_nullContent、testCreate_emptyContent、testCreate_userIdLengthMin、testCreate_userIdLengthMax、testCreate_userIdLengthOverMax、testCreate_stateZero、testCreate_stateMin、testCreate_stateMax、testCreate_stateOverMax`
+**测试函数**：`MessageServiceImplTest:testCreate_validMessage()、testCreate_nullMessage()、testCreate_nullUserID()、testCreate_nullContent()、testCreate_emptyContent()、testCreate_userIdLengthMin()、testCreate_userIdLengthMax()、testCreate_userIdLengthOverMax()、testCreate_stateZero()、testCreate_stateMin()、testCreate_stateMax()、testCreate_stateOverMax()`
 
 **设计技术**：`等价类划分 + 边界值分析`
 
@@ -974,7 +974,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:findById(int messageID)`
 
-**测试函数**：`MessageServiceImplTest:testFindById_existingId、testFindById_nonExistingId、testFindById_messageIdZero`
+**测试函数**：`MessageServiceImplTest:testFindById_existingId()、testFindById_nonExistingId()、testFindById_messageIdZero()`
 
 **设计技术**：`等价类划分 + 边界值分析`
 
@@ -990,7 +990,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:delById(int messageID)`
 
-**测试函数**：`MessageServiceImplTest:testDelById_existingId、testDelById_nonExistingId、testDelById_messageIdNegative`
+**测试函数**：`MessageServiceImplTest:testDelById_existingId()、testDelById_nonExistingId()、testDelById_messageIdNegative()`
 
 **设计技术**：`等价类划分 + 边界值分析`
 
@@ -1006,7 +1006,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:update(Message message)`
 
-**测试函数**：`MessageServiceImplTest:testUpdate_existingMessage、testUpdate_nullMessage、testUpdate_nonExistingMessage`
+**测试函数**：`MessageServiceImplTest:testUpdate_existingMessage()、testUpdate_nullMessage()、testUpdate_nonExistingMessage()`
 
 **设计技术**：`等价类划分`
 
@@ -1022,7 +1022,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:findByUser(String userID, Pageable pageable)`
 
-**测试函数**：`MessageServiceImplTest:testFindByUser_existingUser、testFindByUser_noMessages、testFindByUser_nullUserID、testFindByUser_emptyUserID、testFindByUser_nullPageable、testFindByUser_pageableMinBoundary、testFindByUser_negativePageNumber、testFindByUser_zeroPageSize`
+**测试函数**：`MessageServiceImplTest:testFindByUser_existingUser()、testFindByUser_noMessages()、testFindByUser_nullUserID()、testFindByUser_emptyUserID()、testFindByUser_nullPageable()、testFindByUser_pageableMinBoundary()、testFindByUser_negativePageNumber()、testFindByUser_zeroPageSize()`
 
 **设计技术**：`等价类划分 + 边界值分析`
 
@@ -1051,7 +1051,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:findWaitState(Pageable pageable)`
 
-**测试函数**：`MessageServiceImplTest:testFindWaitState_hasData、testFindWaitState_noData、testFindWaitState_nullPageable`
+**测试函数**：`MessageServiceImplTest:testFindWaitState_hasData()、testFindWaitState_noData()、testFindWaitState_nullPageable()`
 
 **设计技术**：`等价类划分`
 
@@ -1067,7 +1067,7 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 
 **测试对象**：`src.main.java.com.demo.service.impl.MessageServiceImpl.java:findPassState(Pageable pageable)`
 
-**测试函数**：`MessageServiceImplTest:testFindPassState_hasData、testFindPassState_noData、testFindPassState_nullPageable`
+**测试函数**：`MessageServiceImplTest:testFindPassState_hasData()、testFindPassState_noData()、testFindPassState_nullPageable()`
 
 **设计技术**：`等价类划分`
 
