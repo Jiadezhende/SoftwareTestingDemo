@@ -2,6 +2,74 @@
 
 **最后更新：** 2026-04-25
 
+## 目录
+
+<table><tr><td>
+
+[分工说明](#分工说明)
+
+**[一、UserServiceImpl 单元测试](#一userserviceimpl-单元测试)**
+- [findByUserID(String)](#findbyuseridstring)
+- [findById(int)](#findbyidint)
+- [findByUserID(Pageable)](#findbyuseridpageable)
+- [checkLogin](#checklogin)
+- [create](#create)
+- [delByID](#delbyid)
+- [updateUser](#updateuser)
+- [countUserID](#countuserid)
+
+**[二、OrderServiceImpl 单元测试](#二orderserviceimpl-单元测试)**
+- [findById](#findbyid)
+- [findDateOrder](#finddateorder)
+- [findUserOrder](#finduserorder)
+- [submit](#submit)
+- [updateOrder](#updateorder)
+- [delOrder](#delorder)
+- [confirmOrder](#confirmorder)
+- [finishOrder](#finishorder)
+- [rejectOrder](#rejectorder)
+- [findNoAuditOrder](#findnoauditorder)
+- [findAuditOrder](#findauditorder)
+
+**[三、VenueServiceImpl 单元测试](#三venueserviceimpl-单元测试)**
+- [findByVenueID](#findbyvenueid)
+- [findByVenueName](#findbyvenuename)
+- [findAll(Pageable)](#findallpageable)
+- [findAll()](#findall)
+- [create](#create-1)
+- [update](#update)
+- [delById](#delbyid-1)
+- [countVenueName](#countvenuename)
+
+</td><td>
+
+**[四、NewsServiceImpl 单元测试](#四newsserviceimpl-单元测试)**
+- [findAll](#findall-1)
+- [findById](#findbyid-1)
+- [create](#create-2)
+- [delById](#delbyid-2)
+- [update](#update-1)
+
+**[五、MessageServiceImpl 单元测试](#五messageserviceimpl-单元测试)**
+- [confirmMessage](#confirmmessage)
+- [rejectMessage](#rejectmessage)
+- [create](#create-3)
+- [findById](#findbyid-2)
+- [delById](#delbyid-3)
+- [update](#update-2)
+- [findByUser](#findbyuser)
+- [findWaitState](#findwaitstate)
+- [findPassState](#findpassstate)
+
+**[六、集成测试](#六集成测试)**
+- [登录流程](#登录流程)
+- [订单流程](#订单流程)
+- [场馆流程](#场馆流程)
+- [留言流程](#留言流程)
+- [黑盒自查](#黑盒自查缺陷暴露--disabled-占位)
+
+</td></tr></table>
+
 ## 分工说明
 
 | 模块 | 负责人 | 用例编号段 | 测试类 |
@@ -12,8 +80,6 @@
 | NewsServiceImpl | 丘俊 | UT-NW-001 ~ UT-NW-020 | `NewsServiceImplTest` |
 | MessageServiceImpl | 俞楚凡 | UT-MG-001 ~ UT-MG-042 | `MessageServiceImplTest` |
 | 集成测试 | 高伟博 | IT-INT-001 ~ IT-INT-029 | `IntegrationFlowTest` |
-
----
 
 # 一、UserServiceImpl 单元测试
 
@@ -45,7 +111,6 @@
 | UT-US-003 | EC3 | userID 为空字符串时返回 null | `""` | 返回 null | 通过 | 正确 |
 | UT-US-004 | EC4 | userID 为 null 时返回 null | `null` | 返回 null | 通过 | 正确 |
 
----
 
 ## findById(int)
 
@@ -73,7 +138,6 @@
 | UT-US-007 | EC7 | id = 0（边界值）时返回 null | `0` | 返回 null | 通过 | 正确 |
 | UT-US-008 | EC8 | id 为负数时返回 null | `-1` | 返回 null | 通过 | 正确 |
 
----
 
 ## findByUserID(Pageable)
 
@@ -97,7 +161,6 @@
 | UT-US-009 | EC9 | 存在普通用户时返回含数据的分页 | `PageRequest.of(0,10)` | 返回 totalElements=1，且元素 isadmin=0 | 通过 | 正确 |
 | UT-US-010 | EC10 | 无普通用户时返回空分页 | `PageRequest.of(0,10)` | 返回 totalElements=0，content 为空 | 通过 | 正确 |
 
----
 
 ## checkLogin
 
@@ -129,7 +192,6 @@
 | UT-US-015 | EC15 | userID 为 null 时服务层应抛出 LoginException | `null`, `"123456"` | 抛出 `LoginException`，且不调用 `userDao.findByUserIDAndPassword` | 失败（缺陷暴露） | 错误 |
 | UT-US-016 | EC16 | password 为 null 时服务层应抛出 LoginException | `"user001"`, `null` | 抛出 `LoginException`，且不调用 `userDao.findByUserIDAndPassword` | 失败（缺陷暴露） | 错误 |
 
----
 
 ## create
 
@@ -158,7 +220,6 @@
 | UT-US-029 | EC29 | userID 为 null 应被拒绝，save 不应被调用 | `userID = null` 的 User | 抛出异常（类型待定） | 跳过（@Disabled） | 待测 |
 | UT-US-030 | EC30 | 重复 userID 应被拒绝，save 不应被调用 | 已存在的 `userID`（countUserID 返回 1） | 抛出异常（类型待定） | 跳过（@Disabled） | 待测 |
 
----
 
 ## delByID
 
@@ -184,7 +245,6 @@
 | UT-US-021 | EC21 | id 不存在时抛出 EmptyResultDataAccessException | `999` | 抛出 `EmptyResultDataAccessException` | 通过 | 正确 |
 | UT-US-022 | EC22 | id 为负数时抛出 EmptyResultDataAccessException | `-1` | 抛出 `EmptyResultDataAccessException` | 通过 | 正确 |
 
----
 
 ## updateUser
 
@@ -208,7 +268,6 @@
 | UT-US-023 | EC23 | 有效 User 时调用 save 保存 | 修改了 userName 的 User | 调用 save 一次，无异常 | 通过 | 正确 |
 | UT-US-024 | EC24 | user 为 null 时抛出 IllegalArgumentException | `null` | 抛出 `IllegalArgumentException` | 通过 | 正确 |
 
----
 
 ## countUserID
 
@@ -234,7 +293,6 @@
 | UT-US-026 | EC26 | userID 不存在时返回 0 | `"newUser"` | 返回 `0` | 通过 | 正确 |
 | UT-US-027 | EC27 | userID 为 null 时返回 0 | `null` | 返回 `0` | 通过 | 正确 |
 
----
 
 # 二、OrderServiceImpl 单元测试
 
@@ -250,13 +308,7 @@
 
 **测试对象**：`OrderServiceImpl.findById(int orderID)`
 
-**测试函数**：`OrderServiceImplTest:testFindById_delegatesToDao`
-
-**测试函数**：`OrderServiceImplTest:testFindById_notFound`
-
-**测试函数**：`OrderServiceImplTest:testFindById_zeroId`
-
-**测试函数**：`OrderServiceImplTest:testFindById_daoException`
+**测试函数**：`OrderServiceImplTest:testFindById_delegatesToDao()、testFindById_notFound()、testFindById_zeroId()、testFindById_daoException()`
 
 **设计技术**：等价类划分
 
@@ -267,19 +319,12 @@
 | UT-OR-003 | 输入 `orderID<=0` 的代表值 `0` | 应拒绝非法订单 ID，不应调用 DAO | 实际未校验非法 ID，仍继续调用 `getOne` | 错误 |
 | UT-OR-004 | DAO 查询订单时抛出数据访问异常 | 原样抛出同一异常对象 | 原样抛出 `DataAccessResourceFailureException` | 正确 |
 
----
 
 ## findDateOrder
 
 **测试对象**：`OrderServiceImpl.findDateOrder(int venueID, LocalDateTime startTime, LocalDateTime startTime2)`
 
-**测试函数**：`OrderServiceImplTest:testFindDateOrder_delegatesToDao`
-
-**测试函数**：`OrderServiceImplTest:testFindDateOrder_noMatch`
-
-**测试函数**：`OrderServiceImplTest:testFindDateOrder_invalidTimeRange`
-
-**测试函数**：`OrderServiceImplTest:testFindDateOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testFindDateOrder_delegatesToDao()、testFindDateOrder_noMatch()、testFindDateOrder_invalidTimeRange()、testFindDateOrder_daoException()`
 
 **设计技术**：等价类划分
 
@@ -290,19 +335,12 @@
 | UT-OR-007 | 输入合法场馆 ID，但 `startTime > endTime` | 应拒绝非法时间区间，不应调用 DAO | 实际未校验时间区间，仍继续调用 DAO | 错误 |
 | UT-OR-008 | DAO 按场馆和时间区间查询时抛出数据访问异常 | 原样抛出同一异常对象 | 原样抛出 `DataAccessResourceFailureException` | 正确 |
 
----
 
 ## findUserOrder
 
 **测试对象**：`OrderServiceImpl.findUserOrder(String userID, Pageable pageable)`
 
-**测试函数**：`OrderServiceImplTest:testFindUserOrder_delegatesToDao`
-
-**测试函数**：`OrderServiceImplTest:testFindUserOrder_unknownUser`
-
-**测试函数**：`OrderServiceImplTest:testFindUserOrder_nullUserId`
-
-**测试函数**：`OrderServiceImplTest:testFindUserOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testFindUserOrder_delegatesToDao()、testFindUserOrder_unknownUser()、testFindUserOrder_nullUserId()、testFindUserOrder_daoException()`
 
 **设计技术**：等价类划分
 
@@ -313,25 +351,12 @@
 | UT-OR-011 | 输入空用户标识代表值 `userID=null`，分页参数合法 | 应拒绝非法用户标识，不应调用 DAO | 实际未校验非法 `userID`，仍继续调用 DAO | 错误 |
 | UT-OR-012 | DAO 查询用户分页订单时抛出数据访问异常 | 原样抛出同一异常对象 | 原样抛出 `DataAccessResourceFailureException` | 正确 |
 
----
 
 ## submit
 
 **测试对象**：`OrderServiceImpl.submit(String venueName, LocalDateTime startTime, int hours, String userID)`
 
-**测试函数**：`OrderServiceImplTest:testSubmit_success`
-
-**测试函数**：`OrderServiceImplTest:testSubmit_zeroHours`
-
-**测试函数**：`OrderServiceImplTest:testSubmit_negativeHours`
-
-**测试函数**：`OrderServiceImplTest:testSubmit_unknownVenue`
-
-**测试函数**：`OrderServiceImplTest:testSubmit_nullStartTime`
-
-**测试函数**：`OrderServiceImplTest:testSubmit_nullUserId`
-
-**测试函数**：`OrderServiceImplTest:testSubmit_venueDaoException`
+**测试函数**：`OrderServiceImplTest:testSubmit_success()、testSubmit_zeroHours()、testSubmit_negativeHours()、testSubmit_unknownVenue()、testSubmit_nullStartTime()、testSubmit_nullUserId()、testSubmit_venueDaoException()`
 
 **设计技术**：等价类划分 + 边界值分析
 
@@ -345,23 +370,12 @@
 | UT-OR-018 | 合法场馆名、合法开始时间、`hours=-1` | 非法预约时长应被拒绝，不应保存 | 实际未拦截 `-1`，仍继续保存订单 | 错误 |
 | UT-OR-019 | 查询场馆时 DAO 抛出数据访问异常 | 原样抛出同一异常对象，且不执行 `save` | 原样抛出 `DataAccessResourceFailureException`，未调用 `save` | 正确 |
 
----
 
 ## updateOrder
 
 **测试对象**：`OrderServiceImpl.updateOrder(int orderID, String venueName, LocalDateTime startTime, int hours, String userID)`
 
-**测试函数**：`OrderServiceImplTest:testUpdateOrder_success`
-
-**测试函数**：`OrderServiceImplTest:testUpdateOrder_missingOrder`
-
-**测试函数**：`OrderServiceImplTest:testUpdateOrder_zeroHours`
-
-**测试函数**：`OrderServiceImplTest:testUpdateOrder_negativeHours`
-
-**测试函数**：`OrderServiceImplTest:testUpdateOrder_unknownVenue`
-
-**测试函数**：`OrderServiceImplTest:testUpdateOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testUpdateOrder_success()、testUpdateOrder_missingOrder()、testUpdateOrder_zeroHours()、testUpdateOrder_negativeHours()、testUpdateOrder_unknownVenue()、testUpdateOrder_daoException()`
 
 **设计技术**：等价类划分 + 边界值分析
 
@@ -374,19 +388,12 @@
 | UT-OR-024 | 存在的订单 ID、存在的场馆名、合法开始时间、`hours=-1` | 非法修改时长应被拒绝，不应保存 | 实际未拦截 `-1`，仍继续更新并保存订单 | 错误 |
 | UT-OR-025 | 查询订单时 DAO 抛出数据访问异常 | 原样抛出同一异常对象，且不执行 `save` | 原样抛出 `DataAccessResourceFailureException`，未调用 `save` | 正确 |
 
----
 
 ## delOrder
 
 **测试对象**：`OrderServiceImpl.delOrder(int orderID)`
 
-**测试函数**：`OrderServiceImplTest:testDelOrder_delegatesToDao`
-
-**测试函数**：`OrderServiceImplTest:testDelOrder_notFound`
-
-**测试函数**：`OrderServiceImplTest:testDelOrder_zeroId`
-
-**测试函数**：`OrderServiceImplTest:testDelOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testDelOrder_delegatesToDao()、testDelOrder_notFound()、testDelOrder_zeroId()、testDelOrder_daoException()`
 
 **设计技术**：等价类划分
 
@@ -397,19 +404,12 @@
 | UT-OR-028 | 输入 `orderID<=0` 的代表值 `0` | 应拒绝非法订单 ID，不应调用删除 | 实际未校验非法 ID，仍继续调用 `deleteById` | 错误 |
 | UT-OR-029 | DAO 删除订单时抛出数据访问异常 | 原样抛出同一异常对象 | 原样抛出 `EmptyResultDataAccessException` | 正确 |
 
----
 
 ## confirmOrder
 
 **测试对象**：`OrderServiceImpl.confirmOrder(int orderID)`
 
-**测试函数**：`OrderServiceImplTest:testConfirmOrder_success`
-
-**测试函数**：`OrderServiceImplTest:testConfirmOrder_notFound`
-
-**测试函数**：`OrderServiceImplTest:testConfirmOrder_illegalState`
-
-**测试函数**：`OrderServiceImplTest:testConfirmOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testConfirmOrder_success()、testConfirmOrder_notFound()、testConfirmOrder_illegalState()、testConfirmOrder_daoException()`
 
 **设计技术**：语句覆盖 + 判定覆盖
 
@@ -420,19 +420,12 @@
 | UT-OR-032 | 输入非法前置状态代表值 `STATE_WAIT` 的订单 | 应拒绝非法前置状态并抛出业务异常，不更新订单状态 | 实际未拦截非法状态，直接更新为 `STATE_WAIT` | 错误 |
 | UT-OR-033 | 查询订单时 DAO 抛出数据访问异常 | 原样抛出同一异常对象，且不执行 `updateState` | 原样抛出 `DataAccessResourceFailureException`，未调用 `updateState` | 正确 |
 
----
 
 ## finishOrder
 
 **测试对象**：`OrderServiceImpl.finishOrder(int orderID)`
 
-**测试函数**：`OrderServiceImplTest:testFinishOrder_success`
-
-**测试函数**：`OrderServiceImplTest:testFinishOrder_notFound`
-
-**测试函数**：`OrderServiceImplTest:testFinishOrder_illegalState`
-
-**测试函数**：`OrderServiceImplTest:testFinishOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testFinishOrder_success()、testFinishOrder_notFound()、testFinishOrder_illegalState()、testFinishOrder_daoException()`
 
 **设计技术**：语句覆盖 + 判定覆盖
 
@@ -443,19 +436,12 @@
 | UT-OR-036 | 输入非法前置状态代表值 `STATE_NO_AUDIT` 的订单 | 应拒绝非法前置状态并抛出业务异常，不更新订单状态 | 实际未拦截非法状态，直接更新为 `STATE_FINISH` | 错误 |
 | UT-OR-037 | 查询订单时 DAO 抛出数据访问异常 | 原样抛出同一异常对象，且不执行 `updateState` | 原样抛出 `DataAccessResourceFailureException`，未调用 `updateState` | 正确 |
 
----
 
 ## rejectOrder
 
 **测试对象**：`OrderServiceImpl.rejectOrder(int orderID)`
 
-**测试函数**：`OrderServiceImplTest:testRejectOrder_success`
-
-**测试函数**：`OrderServiceImplTest:testRejectOrder_notFound`
-
-**测试函数**：`OrderServiceImplTest:testRejectOrder_illegalState`
-
-**测试函数**：`OrderServiceImplTest:testRejectOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testRejectOrder_success()、testRejectOrder_notFound()、testRejectOrder_illegalState()、testRejectOrder_daoException()`
 
 **设计技术**：语句覆盖 + 判定覆盖
 
@@ -466,19 +452,12 @@
 | UT-OR-040 | 输入非法前置状态代表值 `STATE_WAIT` 的订单 | 应拒绝非法前置状态并抛出业务异常，不更新订单状态 | 实际未拦截非法状态，直接更新为 `STATE_REJECT` | 错误 |
 | UT-OR-041 | 查询订单时 DAO 抛出数据访问异常 | 原样抛出同一异常对象，且不执行 `updateState` | 原样抛出 `DataAccessResourceFailureException`，未调用 `updateState` | 正确 |
 
----
 
 ## findNoAuditOrder
 
 **测试对象**：`OrderServiceImpl.findNoAuditOrder(Pageable pageable)`
 
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_delegatesToDao`
-
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_empty`
-
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_nullPageable`
-
-**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testFindNoAuditOrder_delegatesToDao()、testFindNoAuditOrder_empty()、testFindNoAuditOrder_nullPageable()、testFindNoAuditOrder_daoException()`
 
 **设计技术**：等价类划分
 
@@ -489,17 +468,12 @@
 | UT-OR-044 | 输入 `pageable=null` | 应拒绝空分页参数，不应调用 DAO | 实际未校验空分页参数，仍继续调用 DAO | 错误 |
 | UT-OR-045 | DAO 查询未审核订单时抛出数据访问异常 | 原样抛出同一异常对象 | 原样抛出 `DataAccessResourceFailureException` | 正确 |
 
----
 
 ## findAuditOrder
 
 **测试对象**：`OrderServiceImpl.findAuditOrder()`
 
-**测试函数**：`OrderServiceImplTest:testFindAuditOrder_delegatesToDao`
-
-**测试函数**：`OrderServiceImplTest:testFindAuditOrder_empty`
-
-**测试函数**：`OrderServiceImplTest:testFindAuditOrder_daoException`
+**测试函数**：`OrderServiceImplTest:testFindAuditOrder_delegatesToDao()、testFindAuditOrder_empty()、testFindAuditOrder_daoException()`
 
 **设计技术**：等价类划分
 
@@ -509,7 +483,6 @@
 | UT-OR-047 | 当前无已审核订单 | 返回空列表 | 返回空列表 | 正确 |
 | UT-OR-048 | DAO 查询已审核订单时抛出数据访问异常 | 原样抛出同一异常对象 | 原样抛出 `DataAccessResourceFailureException` | 正确 |
 
----
 
 # 三、VenueServiceImpl 单元测试
 
@@ -529,7 +502,6 @@
 | UT-VN-009 | 边界值：传入 `id=0` 查询场馆 | 调用 `venueDao.getOne(0)` 并返回对应对象 | 返回 DAO 模拟的 `venueID=0` 场馆对象 | 正确 |
 | UT-VN-010 | 异常路径：DAO 按 ID 查询场馆抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 
----
 
 ## findByVenueName
 
@@ -545,7 +517,6 @@
 | UT-VN-011 | 边界值：传入空字符串场馆名 | 调用 `venueDao.findByVenueName("")` 并返回 DAO 结果 | 返回 DAO 模拟的空名称场馆对象 | 正确 |
 | UT-VN-012 | 异常路径：DAO 按名称查询场馆抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 
----
 
 ## findAll(Pageable)
 
@@ -585,7 +556,6 @@
 | UT-VN-014 | 异常路径：DAO 分页查询场馆抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-VN-025 | 等价类：`pageable=null` | 调用 `venueDao.findAll(null)`，异常向上透传 | 捕获到 DAO 抛出的 `IllegalArgumentException`，对象一致 | 正确 |
 
----
 
 ## findAll()
 
@@ -601,7 +571,6 @@
 | UT-VN-015 | 边界值：DAO 返回空场馆列表 | 调用 `venueDao.findAll()` 并原样返回空列表 | 返回空列表，`size=0` | 正确 |
 | UT-VN-016 | 异常路径：DAO 查询全部场馆抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 
----
 
 ## create
 
@@ -653,7 +622,6 @@
 | UT-VN-030 | 缺陷占位：`venueName` 为空的场馆不应被创建（BUG-024） | 应抛出业务异常，且不调用 `venueDao.save(venue)` | 跳过（@Disabled） | 待测 |
 | UT-VN-031 | 缺陷占位：重复 `venueName` 的场馆不应被创建（BUG-025） | 应先校验 `countVenueName`，若已存在则抛出业务异常 | 跳过（@Disabled） | 待测 |
 
----
 
 ## update
 
@@ -685,7 +653,6 @@
 | UT-VN-020 | 异常路径：DAO 更新场馆抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-VN-027 | 等价类：`venue=null` | 调用 `venueDao.save(null)`，异常向上透传 | 捕获到 DAO 抛出的 `IllegalArgumentException`，对象一致 | 正确 |
 
----
 
 ## delById
 
@@ -701,7 +668,6 @@
 | UT-VN-021 | 边界值：删除 `id=0` 的场馆 | 调用 `venueDao.deleteById(0)` | 校验到 `deleteById(0)` 被正确调用 | 正确 |
 | UT-VN-022 | 异常路径：DAO 删除场馆抛出异常 | 异常向上透传，不做吞并或忽略 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 
----
 
 ## countVenueName
 
@@ -735,7 +701,6 @@
 | UT-VN-024 | 异常路径：DAO 统计场馆名数量抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-VN-028 | 等价类：`venueName=null` | 调用 `venueDao.countByVenueName(null)`，异常向上透传 | 捕获到 DAO 抛出的 `IllegalArgumentException`，对象一致 | 正确 |
 
----
 
 # 四、NewsServiceImpl 单元测试
 
@@ -772,7 +737,6 @@
 | UT-NW-007 | 异常路径：DAO 分页查询抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-NW-016 | 等价类：`pageable=null` | 调用 `newsDao.findAll(null)`，异常向上透传 | 捕获到 DAO 抛出的 `IllegalArgumentException`，对象一致 | 正确 |
 
----
 
 ## findById
 
@@ -788,7 +752,6 @@
 | UT-NW-008 | 边界值：查询 `newsID=0` 的新闻 | 调用 `newsDao.getOne(0)` 并返回对应对象 | 返回 DAO 模拟的 `newsID=0` 新闻对象 | 正确 |
 | UT-NW-009 | 异常路径：DAO 查询单条新闻抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 
----
 
 ## create
 
@@ -827,7 +790,6 @@
 | UT-NW-019 | 缺陷占位：`title` 为空的新闻不应被创建（BUG-021） | 应抛出业务异常，且不调用 `newsDao.save(news)` | 跳过（@Disabled） | 待测 |
 | UT-NW-020 | 缺陷占位：`content` 为空的新闻不应被创建（BUG-022） | 应抛出业务异常，且不调用 `newsDao.save(news)` | 跳过（@Disabled） | 待测 |
 
----
 
 ## delById
 
@@ -843,7 +805,6 @@
 | UT-NW-012 | 边界值：删除 `newsID=0` 的新闻 | 调用 `newsDao.deleteById(0)` | 校验到 `deleteById(0)` 被正确调用 | 正确 |
 | UT-NW-013 | 异常路径：DAO 删除新闻抛出异常 | 异常向上透传，不做吞并或忽略 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 
----
 
 ## update
 
@@ -875,7 +836,6 @@
 | UT-NW-015 | 异常路径：DAO 更新新闻抛出异常 | 异常向上透传，不做吞并或转换 | 捕获到 DAO 抛出的 `RuntimeException`，对象一致 | 正确 |
 | UT-NW-018 | 等价类：`news=null` | 调用 `newsDao.save(null)`，异常向上透传 | 捕获到 DAO 抛出的 `IllegalArgumentException`，对象一致 | 正确 |
 
----
 
 # 五、MessageServiceImpl 单元测试
 
@@ -911,7 +871,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-029 | confirmMessage 传入 messageID=1（下界） | 若留言存在则状态变为 STATE_PASS | updateState(STATE_PASS, 1) 被正确调用 | 正确 |
 | UT-MG-030 | confirmMessage 传入 messageID=-1（负数） | 抛出 RuntimeException("留言不存在") | 抛出 RuntimeException("留言不存在") | 正确 |
 
----
 
 ## rejectMessage
 
@@ -926,7 +885,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-003 | 传入数据库中存在的留言 ID(2) | 该留言状态变为 STATE_REJECT(3) | DAO 的 updateState(STATE_REJECT, 2) 被正确调用 | 正确 |
 | UT-MG-004 | 传入数据库中不存在的留言 ID(9999) | 抛出 RuntimeException("留言不存在") | 抛出 RuntimeException("留言不存在") | 正确 |
 
----
 
 ## create
 
@@ -968,7 +926,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-038 | create 传入 state=3（上界，驳回） | 正常创建 | 正常创建，返回 messageID=35 | 正确 |
 | UT-MG-039 | create 传入 state=4（上界+1，非法状态） | 应拒绝创建，抛出异常或返回错误 | 跳过（@Disabled，BUG-035） | 跳过 |
 
----
 
 ## findById
 
@@ -984,7 +941,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-011 | 传入数据库中不存在的留言 ID(9999) | 抛出 EntityNotFoundException | 抛出 EntityNotFoundException | 正确 |
 | UT-MG-031 | findById 传入 messageID=0 | 抛出 EntityNotFoundException | 抛出 EntityNotFoundException | 正确 |
 
----
 
 ## delById
 
@@ -1000,7 +956,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-013 | 传入数据库中不存在的留言 ID(9999) | 抛出 EmptyResultDataAccessException | 抛出 EmptyResultDataAccessException | 正确 |
 | UT-MG-032 | delById 传入 messageID=-1 | 抛出 EmptyResultDataAccessException | 抛出 EmptyResultDataAccessException | 正确 |
 
----
 
 ## update
 
@@ -1016,7 +971,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-015 | 传入 null | 抛出异常 | 抛出 IllegalArgumentException | 正确 |
 | UT-MG-016 | 传入数据库中不存在的留言（messageID=9999） | 应拒绝更新，抛出异常或返回错误提示 | 跳过（@Disabled，BUG-033） | 跳过 |
 
----
 
 ## findByUser
 
@@ -1045,7 +999,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-041 | 传入 page=-1（下界-1，负数页码） | 抛出 IllegalArgumentException | 抛出 IllegalArgumentException | 正确 |
 | UT-MG-042 | 传入 size=0（下界-1，每页0条） | 抛出 IllegalArgumentException | 抛出 IllegalArgumentException | 正确 |
 
----
 
 ## findWaitState
 
@@ -1061,7 +1014,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-023 | 数据库中无待审核留言 | 返回空分页 | 返回空分页 | 正确 |
 | UT-MG-024 | 传入 pageable 为 null | 抛出异常 | 抛出 IllegalArgumentException | 正确 |
 
----
 
 ## findPassState
 
@@ -1077,7 +1029,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | UT-MG-026 | 数据库中无已通过留言 | 返回空分页 | 返回空分页 | 正确 |
 | UT-MG-027 | 传入 pageable 为 null | 抛出异常 | 抛出 IllegalArgumentException | 正确 |
 
----
 
 # 六、集成测试
 
@@ -1097,7 +1048,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | 普通用户登录 | IT-LG-001 | 合法用户提交正确用户名与密码 | 响应体为 `/index`，Session 写入 `user` | 响应体为 `/index`，Session 成功写入 `user` | 正确 |
 | 密码错误 | IT-LG-002 | 用户名存在但密码错误 | 响应体为 `false` | 响应体为 `false` | 正确 |
 
----
 
 ## 订单流程
 
@@ -1113,7 +1063,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | 登录后提交订单 | IT-OR-002 | 已登录用户提交合法订单参数 | 跳转到 `order_manage`，并调用提交逻辑 | 响应重定向到 `order_manage`，`orderService.submit` 被调用 1 次 | 正确 |
 | 未登录删除订单 | IT-OR-003 | 未登录直接调用 `/delOrder.do` 删除订单 | 请求应被拒绝（登录校验或权限校验失败） | 返回 `true`，`orderService.delOrder(1)` 被调用 | 错误 |
 
----
 
 ## 场馆流程
 
@@ -1128,7 +1077,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | 分页获取场馆列表 | IT-VN-001 | 请求第一页场馆数据 | 返回分页 JSON，`content` 非空且包含场馆名 | 返回分页 JSON，`content[0].venueName=羽毛球馆A` | 正确 |
 | 场馆详情页渲染 | IT-VN-002 | 通过 `venueID` 访问场馆详情页 | 返回详情页面并包含对应场馆数据 | 返回 200，页面包含 `羽毛球馆A` | 正确 |
 
----
 
 ## 留言流程
 
@@ -1146,7 +1094,6 @@ S2: if (message == null) → S3: throw RuntimeException("留言不存在")
 | 伪造用户提交留言 | IT-MG-004 | 登录用户A在请求参数中提交用户B的 `userID` | 应使用会话用户身份，禁止伪造他人身份提交 | 留言按请求参数保存为 `userID=u2002`，未使用会话用户 | 错误 |
 | 未登录删除留言 | IT-MG-005 | 未登录直接调用 `/delMessage.do` 删除留言 | 请求应被拒绝（登录校验或权限校验失败） | 返回 `true`，`messageService.delById(11)` 被调用 | 错误 |
 
----
 
 ## 黑盒自查（缺陷暴露 + @Disabled 占位）
 
